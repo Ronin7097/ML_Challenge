@@ -1,6 +1,6 @@
 # ML Challenge 2026: Business Entity Resolution
 
-**Team Name:** ML_Challenge  
+**Team Name:** DARPA
 **Team Members:** To be supplied by the submitting team  
 **Submission Date:** 26 September 2026
 
