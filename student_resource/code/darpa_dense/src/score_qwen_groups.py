@@ -22,7 +22,17 @@ def main():
     p.add_argument('--split',choices=['train','test'],default='train');p.add_argument('--batch-size',type=int,default=32)
     p.add_argument('--max-length',type=int,default=320);p.add_argument('--max-groups',type=int,default=0)
     p.add_argument('--reuse-selection',type=Path,help='Use an earlier score run selection for a paired model comparison')
+    p.add_argument('--route-min',type=float,default=.05)
+    p.add_argument('--route-max',type=float,default=.995)
+    p.add_argument('--route-close-min',type=float,default=.02)
+    p.add_argument('--route-close-margin',type=float,default=.5)
+    p.add_argument('--restrict-roles',nargs='*',default=[],
+                   help='Train-only scoring subset for fitting/evaluation; omitted for production')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+    if not 0 <= a.route_min < a.route_max <= 1 or not 0 <= a.route_close_min <= 1 or not 0 <= a.route_close_margin <= 1:
+        raise ValueError('Invalid label-free routing thresholds')
+    if a.restrict_roles and a.split!='train':
+        raise ValueError('Role restriction is only valid on labelled training partitions')
     torch.set_num_threads(6);torch.cuda.set_per_process_memory_fraction(.5)
     tokenizer,model=load(a.base_model,a.adapter);model.eval()
     weights={p.name:sha(p) for p in sorted(a.base_model.glob('*.safetensors'))}
@@ -38,7 +48,8 @@ def main():
         winner_file=a.owner_model/f'all_winners_{country}.parquet'
         signature={'base_weights':weights,'adapter_sha256':adapter_weights,'max_length':a.max_length,
                    'max_groups':a.max_groups,'retrieval':complete['signature'],'winner_sha256':sha(winner_file),
-                   'route':'pair p in (0.05,0.995), or p>0.02 and pair margin<0.5; no labels',
+                   'route':{'min':a.route_min,'max':a.route_max,'close_min':a.route_close_min,
+                            'close_margin':a.route_close_margin,'restrict_roles':a.restrict_roles},
                    'prompt_source_sha256':sha(Path(__file__).with_name('qwen_model.py'))}
         config=dest/'config.json'
         if config.exists() and json.loads(config.read_text())!=signature:raise ValueError('Score cache configuration differs')
@@ -52,8 +63,12 @@ def main():
         else:
             table=pq.read_table(winner_file,columns=['target_row','pair_probability','pair_margin'])
             rows=table['target_row'].to_numpy();prob=table['pair_probability'].to_numpy();margin=table['pair_margin'].to_numpy()
-            route=((prob>.05)&(prob<.995))|((prob>.02)&(margin<.5))
+            route=((prob>a.route_min)&(prob<a.route_max))|((prob>a.route_close_min)&(margin<a.route_close_margin))
             selected=rows[route]
+            if a.restrict_roles:
+                source_roles=np.asarray(pq.read_table(source,columns=['role'])['role'].to_pylist())
+                allowed=np.isin(source_roles,a.restrict_roles)
+                selected=selected[allowed[candidates[selected]].any(axis=1)]
             if a.max_groups and len(selected)>a.max_groups:
                 selected=np.random.default_rng(20260927).choice(selected,a.max_groups,replace=False)
             selected=np.sort(selected)
