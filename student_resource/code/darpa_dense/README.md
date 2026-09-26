@@ -31,7 +31,7 @@ record text or the same normalized name are masked as contrastive negatives.
 The prepared split contains 23,770 pair-fitting entities, 23,746 context-fitting
 entities, 7,882 tuning entities, and **7,909 sealed reserve entities**. There are
 100,492 historical normalized-name groups excluded from the new evaluation.
-The first full encoder run uses one million positive fitting pairs.
+The first full encoder run used one million positive fitting pairs.
 
 Excluding historical groups can change the name-frequency mix. Any performance
 comparison must score the frozen baseline on the same new entities and report
@@ -49,7 +49,7 @@ the candidate set fed to the model.
 
 1. Prepare full supplied records and split manifest.
 2. Smoke-test cached contrastive gradients and a real GPU training step.
-3. Train a short A6000 pilot and a full one-million-pair A100 run when Slurm permits.
+3. Train a short A6000 pilot and a full one-million-pair A100 run.
 4. Encode all training Source 1 records; measure exact owner recall at k=1,2,4,8,10,20,32.
 5. After retrieval is measured, fit owner and incoming-link decision models using
    full-target retrieval, then evaluate once on the sealed reserve.
@@ -125,6 +125,12 @@ Thus HN1 retrieves 55 additional true owners at k=10. This is a retrieval
 result, not a challenge F0.5 score; the full target pool still needs owner
 classification and incoming false-positive accounting. The detailed HN1 report
 is `reports/hn1_retrieval_probe.json`.
+The completed one-million-pair full encoder reaches **0.9953780 at k=10**,
+**0.9969554 at k=20**, and **0.9978357 at k=32** on the same links. It retrieves
+104 more true owners at k=10 than HN1. Its report is
+`reports/full_retrieval_probe.json`. We are processing the full train target
+pool with both runs; full encoder is the preferred candidate for pair/context
+modeling, subject to a complete paired F0.5 comparison.
 The frozen baseline retrieves 0.9876013 of true links with 160 targets per Source
 1 on these tune entities. These have different candidate directions and budgets;
 the challenger needs all-target processing before its exact total budget is known.
