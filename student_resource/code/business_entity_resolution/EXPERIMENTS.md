@@ -31,6 +31,8 @@ The final untouched audit macro F₀.₅ was **97.3744%** (precision 99.4272%, r
 
 The model is packaged in `models/` with its settings, checksums, tuning/audit metrics, and paired comparison. `README.md` gives end-to-end reproduction commands. Python and portable C++ scores/decisions matched on 3,200 tuning pairs. The packaged matcher passed a real 128-query test smoke run and the official format and target-ID checks. The submission's full outputs must receive the same checks before upload.
 
+A second 128-query smoke run on Linux reproduced the macOS matching predictions byte for byte. Candidate-list serialization differed on 6 rows; only one row had a different candidate set (two candidates exchanged), and the matching predictions were unchanged. Both smoke outputs passed validation. This cross-platform observation is a reason to validate the final output rather than assume candidate-file byte identity across systems.
+
 ## Where to improve next
 
 1. **Candidate misses:** About 2.51% of audit true links are absent from the top 160 candidates. Inspect missed links on a new development split, especially aliases and severe transliteration, then try recall improvements without adding common-name false candidates. The v4 sound-blocking result shows that more keys do not automatically help.

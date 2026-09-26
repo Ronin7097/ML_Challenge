@@ -13,3 +13,4 @@ student_resource/output_advanced/
 student_resource/.output_advanced-*/
 __pycache__/
 catboost_info/
+.darpa_remote.json

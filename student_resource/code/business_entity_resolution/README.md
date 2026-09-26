@@ -16,6 +16,8 @@ From the development repository root, the equivalent command is `python3 student
 
 This requires a C++17 compiler (`clang++` or `g++`) and Python 3, with no third-party Python dependencies. `models/config.json` selects the correct feature schema and candidate generator. `models/pair.boost` and `models/context.boost` are portable tree ensembles.
 
+The runner prefers `g++` when both compilers are installed; set `CXX` to choose another compiler. On hosts with a full system `/tmp`, set `TMPDIR` to a writable directory with enough space for C++ compilation. The full test run uses substantial CPU time and memory, so a server is recommended.
+
 The runner preserves existing output directories, writes into a staging directory, checks coverage and match/candidate consistency, then publishes the completed result. `--max-queries 128` creates a smoke-test prefix only. Both indices still use full input sources; limiting the Source 1 index would change the comparison features.
 
 The archived model in `models/` is the frozen improved model evaluated below. `output_reproduced/` is created by the command above and must match the submitted `output/` files.

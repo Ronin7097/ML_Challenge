@@ -27,7 +27,7 @@ def main():
             raise ValueError(f"Model checksum mismatch: {filename}")
     source = Path(__file__).resolve().parent
     executable = source.parent / "resolver_advanced"
-    compiler = os.environ.get("CXX") or shutil.which("clang++") or shutil.which("g++")
+    compiler = os.environ.get("CXX") or shutil.which("g++") or shutil.which("clang++")
     if not compiler:
         raise RuntimeError("A C++17 compiler is required")
     if not executable.exists() or any(f.stat().st_mtime > executable.stat().st_mtime for f in source.iterdir() if f.suffix in {".cpp", ".h"}):
