@@ -115,7 +115,16 @@ The frozen baseline scores **0.9775204400514894** on the new 7,882-entity tune
 population, with 25,913 true-positive links, 145 false-positive links and 1,348
 missed links. This uses every training target and competing Source 1. Its eight
 test-row subset check matched both frozen TSVs exactly. Reports are in `reports/`.
-No complete challenger macro F0.5 has been measured yet.
+The first complete challenger (full encoder, pair LightGBM, incoming-context
+LightGBM, no Qwen) scores **0.9829591299071904** on the same 7,882 tune
+entities, versus **0.9775204400514894** for the frozen baseline. It has
+26,506 true-positive, 206 false-positive and 755 missed links. The paired
+difference is +0.0054387; a 2,000-replicate name-group bootstrap interval is
+[+0.0034172, +0.0076403]. Country and name-frequency breakdowns are in
+`reports/full_owner_paired_tune.json`. The 0.62 decision threshold was selected
+on this tune cohort, so the resulting tune F0.5 is optimistic for generalization.
+The sealed reserve is unopened and the Portal score is unknown. SEL1 and Qwen
+could change this result and require a fresh comparison on this same tune set.
 
 The pilot's same-population positive-link retrieval recall is **0.9895455 at
 k=10**, **0.9921500 at k=20**, and **0.9934338 at k=32**; top-1 is 0.9682330.
@@ -136,8 +145,8 @@ features were built for 655,543 India and 1,301,474 US target groups. The featur
 files include all ten retrieved owners for each selected group; 19,570,170 pair
 rows in total. Every target group was scanned; feature extraction omitted only
 groups whose ten owners were all outside the pair, context, and tune roles.
-Pair/context model fitting and the exact paired
-tune F0.5 evaluation have been submitted on Slurm.
+Pair/context model fitting and the exact paired tune F0.5 evaluation completed
+on Slurm; results follow below.
 The frozen baseline retrieves 0.9876013 of true links with 160 targets per Source
 1 on these tune entities. These have different candidate directions and budgets;
 the challenger needs all-target processing before its exact total budget is known.
