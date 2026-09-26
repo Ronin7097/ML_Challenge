@@ -1,7 +1,6 @@
 # ML Challenge 2026: Business Entity Resolution
 
 **Team Name:** DARPA
-**Team Members:** To be supplied by the submitting team  
 **Submission Date:** 26 September 2026
 
 ## 1. Executive Summary
@@ -48,12 +47,12 @@ Audit F₀.₅ is 96.70% for India and 97.82% for the US. There is no labelled F
 
 The packaged model passed a 128-row test smoke run and the official submission validator, including target-ID existence checks. Eleven Python unit tests and the C++ feature checks passed. Smoke outputs cover India, the US, and France; they verify execution and formatting, not test accuracy.
 
-Run from the repository root:
+To regenerate the submitted output from the extracted archive, place the supplied `dataset/` directory next to `code/` and run from the archive root:
 
 ```sh
-python3 student_resource/code/business_entity_resolution/src/predict.py student_resource student_resource/output_advanced --threads 6
+python3 code/business_entity_resolution/src/predict.py . output_reproduced --threads 8
 ```
 
 Inference requires a C++17 compiler and Python 3; third-party Python packages are needed only for training and development evaluation. The runner preserves existing outputs, validates completed files, and records model checksums. `--max-queries 128` produces only a smoke-test prefix.
 
-**The existing `output/` files and `ML_Challenge_submission.zip` still contain the logistic baseline predictions.** They have not been regenerated with this model. Generate the full improved output before building a new competition submission archive. The implementation and models use the repository's MIT license.
+The implementation and packaged models use the repository's MIT license.

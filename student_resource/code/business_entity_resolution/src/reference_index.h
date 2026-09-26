@@ -77,8 +77,18 @@ struct ReferenceIndex {
         result[18]=log1p(min(distance,1e12));result[19]=both&&distance==1;
         auto qnums=digit_runs(q.address),tnums=digit_runs(t.address);auto qa=numeric_evidence(qnums,tnums),ta=numeric_evidence(tnums,qnums);
         result[20]=qa[0];result[21]=ta[0];result[22]=qa[1];result[23]=ta[1];result[24]=qa[2];result[25]=ta[2];
+        // The same target can be a candidate for many Source 1 queries. Its
+        // competing-reference retrieval depends only on that target, so keep
+        // a bounded per-worker cache without changing any feature values.
+        static thread_local const ReferenceIndex* cache_owner=nullptr;
+        static thread_local unordered_map<uint64_t,vector<Hit>> target_hits;
+        if(cache_owner!=this){target_hits.clear();cache_owner=this;}
+        if(target_hits.size()>=100000)target_hits.clear();
+        uint64_t target_key=(uint64_t(t.source)<<32)|t.id;
+        auto cached=target_hits.find(target_key);
+        if(cached==target_hits.end())cached=target_hits.emplace(target_key,retrieve(t)).first;
         Prepared v(t,false);AdvancedPrepared av(t);
-        for(auto&h:retrieve(t)){
+        for(auto&h:cached->second){
             auto&a=records[h.row];if(a.id==q.id)continue;Prepared u(a,false);AdvancedPrepared au(a);
             auto basic=extended_features(a,t,u,v,expm1f(original[58]),max(0,int(round(expm1f(original[59])))));
             // Retrieval evidence is held constant while comparing the text of
