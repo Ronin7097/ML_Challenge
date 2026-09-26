@@ -20,7 +20,16 @@ The runner prefers `g++` when both compilers are installed; set `CXX` to choose 
 
 The runner preserves existing output directories, writes into a staging directory, checks coverage and match/candidate consistency, then publishes the completed result. `--max-queries 128` creates a smoke-test prefix only. Both indices still use full input sources; limiting the Source 1 index would change the comparison features.
 
-The archived model in `models/` is the frozen improved model evaluated below. `output_reproduced/` is created by the command above and must match the submitted `output/` files.
+The archived model in `models/` is the frozen improved model evaluated below. `output_reproduced/` is created by the command above. The submitted output was generated on Linux with `--threads 16`; a 128-query macOS/Linux comparison gave identical matches but a small candidate-set difference on one row, so compare full outputs with the provided validators rather than assuming byte identity across platforms.
+
+The completed submission contains 1,732,544 Source 1 rows, 5,706,911 predicted links, and 277,206,818 scored candidate links. The runner's `run.json` marks `complete_submission: true`, and its model hashes match the packaged `pair.boost` and `context.boost`. The streaming validator checked every row, candidate list, and match subset; the official validator checked every predicted match against all 9,969,589 test Source 2/3 IDs. Test labels are withheld, so these checks do not measure test F₀.₅.
+
+Submitted output SHA-256:
+
+```text
+matching_results.tsv  a3206ea534e06a940fed65f45d695beebf885088f94cc84b3d27dea2bee7a381
+candidate_pairs.tsv   dbfdf653a555ce15994b1fdb6932b87a0a2d0987d8878977cef23c39c386b1cf
+```
 
 ## Training from the supplied data
 

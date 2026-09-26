@@ -1,7 +1,7 @@
 # ML Challenge 2026: Business Entity Resolution
 
 **Team Name:** DARPA
-**Submission Date:** 26 September 2026
+**Submission Date:** 27 September 2026
 
 ## 1. Executive Summary
 
@@ -48,6 +48,8 @@ Audit F₀.₅ is 96.70% for India and 97.82% for the US. There is no labelled F
 `code/business_entity_resolution/README.md` gives the training, frozen audit, and portable-inference commands. `code/business_entity_resolution/EXPERIMENTS.md` records all trials and next steps. `models/` contains the portable pair/context models, checksums, settings, and validation results. Python/C++ parity was verified on 3,200 tuning pairs with zero raw-score error and identical final decisions.
 
 The packaged model passed a 128-row test smoke run and the official submission validator, including target-ID existence checks. Eleven Python unit tests and the C++ feature checks passed. Smoke outputs cover India, the US, and France; they verify execution and formatting, not test accuracy.
+
+Full Linux inference completed for all 1,732,544 test Source 1 records, producing 5,706,911 matches and 277,206,818 candidate links. The streaming validator passed on both complete TSVs, including match-subset checks. The official validator passed on `matching_results.tsv` with ID-existence checks against all 9,969,589 test Source 2/3 IDs. Server and local file SHA-256 hashes matched. Test F₀.₅ cannot be computed without withheld labels.
 
 To regenerate the submitted output from the extracted archive, place the supplied `dataset/` directory next to `code/` and run from the archive root:
 
