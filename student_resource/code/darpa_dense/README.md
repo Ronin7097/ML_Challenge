@@ -119,13 +119,20 @@ No complete challenger macro F0.5 has been measured yet.
 
 The pilot's same-population positive-link retrieval recall is **0.9895455 at
 k=10**, **0.9921500 at k=20**, and **0.9934338 at k=32**; top-1 is 0.9682330.
+The HN1 continuation reaches **0.9915630 at k=10**, **0.9937273 at k=20**,
+and **0.9947544 at k=32** on exactly the same 27,261 tune positive links.
+Thus HN1 retrieves 55 additional true owners at k=10. This is a retrieval
+result, not a challenge F0.5 score; the full target pool still needs owner
+classification and incoming false-positive accounting. The detailed HN1 report
+is `reports/hn1_retrieval_probe.json`.
 The frozen baseline retrieves 0.9876013 of true links with 160 targets per Source
 1 on these tune entities. These have different candidate directions and budgets;
-the pilot needs all-target processing before its exact total budget is known.
+the challenger needs all-target processing before its exact total budget is known.
 Its top-10 result did not clear the predeclared 99% processing gate, so the
-expensive control pipeline stopped before full-target inference. HN1 is now
-mining 50,000 fitting owners per country directly, then training a separate
-checkpoint and repeating the identical recall probe. No reserve labels are used.
+expensive control pipeline stopped before full-target inference. HN1 cleared
+the gate; its 1,024-target full-pool smoke passed finite-score, score-order,
+unique-owner, and owner-bound checks. Its complete train target retrieval is
+running on the A6000 server. No reserve labels are used.
 
 The Qwen 0.6B adapter training smoke completed two optimizer steps on 16 supplied
 training pairs. It is only an execution check, not a fitted competition model.
