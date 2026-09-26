@@ -108,6 +108,18 @@ scoring and the Qwen-augmented final decision still need integration and testing
 owner in a routed group; its current routing uses only pair model probabilities,
 not labels. A bounded comparison may reuse exactly those groups. Its full-scale
 execution and final decision integration are not yet validated.
+The first 1,000-group-per-country scoring smoke stopped after 512 India groups
+because the Slurm account reached its NFS disk quota while another project was
+also using that account. This is an environment failure, not a model outcome.
+We are copying complete inputs to the A6000 server, which has space, then will
+resume the bounded scoring check there.
+
+`fit_selector.py` adds the requested **SEL1** alternative: a second LightGBM
+learns from whole shortlisted owner groups after the pair model, chooses among
+all ten owners, and rejects a group when its best probability falls below a
+tuned no-match threshold. It fits on the separate context role and evaluates on
+the tune role. A synthetic end-to-end role/identity check passed; challenge
+performance is not yet measured.
 
 ## Measured status
 
