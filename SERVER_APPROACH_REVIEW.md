@@ -24,3 +24,14 @@ This inventory covers accessible challenge work under `/home/jagat` and a shallo
 5. **Singleton veto and runner-up switching** produce much smaller or unstable gains. Our current expected-F₀.₅ policy already considers the empty set, so a new veto needs a paired test against our own decisions before use.
 
 Keep the current server inference and frozen output as a reproducible fallback. A8 is the strongest *validated full-test alternative file* found in this scan, but its public score is unknown and its own source/model/documentation would have to accompany any submission that uses it. Do not substitute a different TSV into the DARPA archive while documenting the CatBoost pipeline as its producer.
+
+## Direct transfer checks on DARPA's frozen tuning outputs
+
+We tested two small decision changes on our own 6,000-entity tuning split using the frozen context logits and all 960,000 candidate rows, without retraining or opening further audit labels:
+
+- The selected 19,688 links had **zero** duplicate target assignments. Every selected link was also the highest-scoring edge for its target among the 6,000 sampled Source 1 entities. A one-owner-per-target or target-best-only filter therefore changed no tuning predictions and left macro F₀.₅ at 97.4422%.
+- A score-only veto of one-link predictions, with raw-logit cutoffs from 0.5 to 5.0 selected within five folds, chose the no-op rule in every fold. It left tuning macro F₀.₅ at 97.4422%. There were only nine mistaken singleton entities, six with one predicted link, so a simple singleton veto has limited room to help.
+
+In the first 150,000 rows of the *unlabelled* test prediction stream, 87 targets had multiple predicted Source 1 owners (88 extra assignments among 494,075 links). This shows that conflicts can occur at full scale, but it does not establish which owner is correct or the effect of a filter on test F₀.₅.
+
+The next real improvement experiment should train target-competition and incoming-link features on a new name-disjoint development cohort, compare against the frozen CatBoost decision on identical entities, and separately measure extra true-link recall from structural retrieval after the 160-candidate cap. Only a validated gain on a fresh holdout would justify another full inference run.
