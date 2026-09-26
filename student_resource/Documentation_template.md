@@ -31,6 +31,8 @@ For each entity, the decision rule compares the empty set with successive prefix
 
 ## 5. Results and Limitations
 
+We tested a logistic baseline; several CatBoost pair and candidate-context models; 14-feature and 26-feature competing Source 1 evidence; a larger fitting split; and a per-entity expected-F₀.₅ decision rule. An additional phonetic-blocking trial lowered candidate recall and was discarded. The full tuning-only sequence, rejected variants, and improvement ideas are in `code/business_entity_resolution/EXPERIMENTS.md`.
+
 | Configuration | Tuning macro F₀.₅ | Audit macro F₀.₅ |
 |---|---:|---:|
 | Original logistic baseline | 82.87% | 83.39% |
@@ -43,7 +45,7 @@ Audit F₀.₅ is 96.70% for India and 97.82% for the US. There is no labelled F
 
 ## 6. Reproduction and Submission Status
 
-`code/business_entity_resolution/README.md` gives the training, frozen audit, and portable-inference commands. `models/` contains the portable pair/context models, checksums, settings, and validation results. Python/C++ parity was verified on 3,200 tuning pairs with zero raw-score error and identical final decisions.
+`code/business_entity_resolution/README.md` gives the training, frozen audit, and portable-inference commands. `code/business_entity_resolution/EXPERIMENTS.md` records all trials and next steps. `models/` contains the portable pair/context models, checksums, settings, and validation results. Python/C++ parity was verified on 3,200 tuning pairs with zero raw-score error and identical final decisions.
 
 The packaged model passed a 128-row test smoke run and the official submission validator, including target-ID existence checks. Eleven Python unit tests and the C++ feature checks passed. Smoke outputs cover India, the US, and France; they verify execution and formatting, not test accuracy.
 

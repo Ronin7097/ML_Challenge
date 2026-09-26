@@ -2,6 +2,8 @@
 
 The improved pipeline uses a CatBoost pair scorer, candidate context, and an unlabelled index of all Source 1 records to compare competing matches. A decision rule chooses how many candidates to return for each entity by approximating expected F₀.₅, including the empty-set option. It was selected on a separate tuning split. A further audit split is excluded from fitting, early stopping, error inspection, and decision selection.
 
+See `EXPERIMENTS.md` for the full development history, discarded variants, and suggested improvements.
+
 ## Inference
 
 From the extracted DARPA archive root, place the supplied `dataset/` directory alongside `code/`, then run:
