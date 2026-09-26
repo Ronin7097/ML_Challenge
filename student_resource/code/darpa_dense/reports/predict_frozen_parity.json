@@ -1,0 +1,61 @@
+{
+  "evaluation": "fresh name-group tune; not Portal; reserve unopened",
+  "entities": 7882,
+  "macro_f05": 0.9829591299071904,
+  "links": {
+    "tp": 26506,
+    "fp": 206,
+    "fn": 755
+  },
+  "singleton_entities": 407,
+  "singleton_accuracy": 0.9778869778869779,
+  "retrieval": {
+    "candidate_pairs": 333635,
+    "true_links_retrieved": 27135,
+    "true_links_missed": 126,
+    "recall": 0.9953780125453945,
+    "oracle_macro_f05": 0.9986884209929293
+  },
+  "strata": {
+    "country:India": {
+      "entities": 2778,
+      "macro_f05": 0.9782226395235261,
+      "baseline_macro_f05": 0.9728491684508973,
+      "paired_delta": 0.005373471072628497
+    },
+    "country:US": {
+      "entities": 5104,
+      "macro_f05": 0.9855371021418731,
+      "baseline_macro_f05": 0.9800629150723444,
+      "paired_delta": 0.005474187069528446
+    },
+    "name_frequency:1": {
+      "entities": 5516,
+      "macro_f05": 0.9880317284792514,
+      "baseline_macro_f05": 0.9829693008751134,
+      "paired_delta": 0.0050624276041381635
+    },
+    "name_frequency:2-5": {
+      "entities": 1940,
+      "macro_f05": 0.9728619202307173,
+      "baseline_macro_f05": 0.9672594446768987,
+      "paired_delta": 0.005602475553818581
+    },
+    "name_frequency:6+": {
+      "entities": 426,
+      "macro_f05": 0.9632599117120473,
+      "baseline_macro_f05": 0.9536951225012469,
+      "paired_delta": 0.00956478921080045
+    }
+  },
+  "paired": {
+    "baseline_macro_f05": 0.9775204400514894,
+    "delta": 0.005438689855700984,
+    "name_groups": 6330,
+    "bootstrap_replicates": 2000,
+    "delta_95pct_interval": [
+      0.00341723078419686,
+      0.007640317783119823
+    ]
+  }
+}
