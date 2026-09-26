@@ -308,5 +308,7 @@ static void run(const string&base,const string&modelpath,const string&outdir) {
     }
     cerr<<"Finished: "<<n<<" Source 1 rows, "<<pc<<" candidates, "<<pm<<" matches\n";
 }
+#ifndef RESOLVER_NO_MAIN
 int main(int argc,char**argv){if(argc<3){cerr<<"Usage: resolver diagnose BASE | resolver train BASE MODEL | resolver predict BASE MODEL OUTPUT_DIR\n";return 2;}
     string mode=argv[1],base=argv[2];if(mode=="diagnose")diagnose(base);else if(mode=="train"&&argc>=4)train(base,argv[3]);else if(mode=="predict"&&argc>=5)run(base,argv[3],argv[4]);else return 2;}
+#endif

@@ -4,3 +4,11 @@ ML_Challenge_submission.zip
 # Challenge datasets and generated submission outputs are too large for GitHub.
 student_resource/dataset/
 student_resource/output/
+.venv/
+student_resource/experiments/
+student_resource/code/business_entity_resolution/resolver_boost
+student_resource/code/business_entity_resolution/resolver_advanced
+student_resource/output_advanced/
+student_resource/.output_advanced-*/
+__pycache__/
+catboost_info/
