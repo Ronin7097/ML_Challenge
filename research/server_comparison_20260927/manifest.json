@@ -1,0 +1,41 @@
+{
+  "captured_at_utc": "2026-09-26T21:00:25.567576+00:00",
+  "sources": [
+    {
+      "file": "a9_development.json",
+      "host": "jagat@172.24.16.155",
+      "source": "/home/jagat/claude-supervisor-20260926/final_dev_k10/dev_report.json",
+      "sha256": "f773be177712604a07ca5b7fa34aff1c683c78b4abeb78777e685b1bd5e8d189"
+    },
+    {
+      "file": "a9_test_coverage.json",
+      "host": "jagat@172.24.16.155",
+      "source": "/home/jagat/claude-merged-20260926/work/sub_a9_full/test_stats.json",
+      "sha256": "a6514e55701d33db7c6567a6f4bf4483c40290b41d08adf17477797a64ef6a6e"
+    },
+    {
+      "file": "a9_error_budget.json",
+      "host": "jagat@172.24.16.155",
+      "source": "/home/jagat/codex-headroom-20260927/headroom.json",
+      "sha256": "6fafdaf821653892594014005fdf821bf8128d643dd385bac0e534af9c6966d0"
+    },
+    {
+      "file": "granite_training_config.json",
+      "host": "jagat@172.24.16.155",
+      "source": "/home/jagat/amazon-ml-challenge-singleton-veto/reports/owner_encoder_training_config.json",
+      "sha256": "43b77cca4e044de264e2cbe677b6f1e91c748c5223e51fb30f0713776f3395b9"
+    },
+    {
+      "file": "slurm_e012.json",
+      "host": "dhruvk@172.24.16.132",
+      "source": "/nfs_home/users/dhruvk/amazon_ml_20260925/repo/results/E012/results.json",
+      "sha256": "2a06e590c9d8c17ba4eb1eaab4ad46a20877ba1e174018971b08d2ddaa1eb1e4"
+    },
+    {
+      "file": "slurm_e014.json",
+      "host": "dhruvk@172.24.16.132",
+      "source": "/nfs_home/users/dhruvk/amazon_ml_20260925/repo/artifacts/E014/results.json",
+      "sha256": "2a06e590c9d8c17ba4eb1eaab4ad46a20877ba1e174018971b08d2ddaa1eb1e4"
+    }
+  ]
+}

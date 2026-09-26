@@ -1,0 +1,110 @@
+{
+  "rows": 72946,
+  "qwen_covered_rows": 26136,
+  "qwen_covered_positive_rows": 21346,
+  "a8_reference_macro_f05": 0.9859132981874721,
+  "qwen_top_k": 10,
+  "features": {
+    "a8": 204,
+    "a9": 214,
+    "qwen": [
+      "q_win",
+      "q_best_other",
+      "q_margin",
+      "q_top_is_win",
+      "q_rank_win",
+      "q_runner",
+      "q_max",
+      "q_2nd",
+      "q_n_ge05",
+      "q_sum"
+    ],
+    "dropped": [
+      "q_blend25"
+    ]
+  },
+  "lgb": {
+    "rounds": 400,
+    "num_leaves": 31,
+    "learning_rate": 0.05,
+    "bag": 5
+  },
+  "owner": {
+    "macro_f05": 0.9805423278291362,
+    "pair_precision": 0.9918044978581628,
+    "pair_recall": 0.9616249891840443,
+    "singleton_accuracy": 0.9623655913978495,
+    "links": 67232,
+    "true_links": 66681
+  },
+  "a8_control": {
+    "macro_f05": 0.9859132981874721,
+    "pair_precision": 0.9959003048870734,
+    "pair_recall": 0.9703931239364311,
+    "singleton_accuracy": 0.9883512544802867,
+    "links": 67566,
+    "true_links": 67289
+  },
+  "a8_fold_thresholds": {
+    "0": 0.78,
+    "1": 0.72,
+    "2": 0.72,
+    "3": 0.76,
+    "4": 0.77
+  },
+  "a8_all_dev_threshold": 0.78,
+  "a9_nested": {
+    "macro_f05": 0.991305713496106,
+    "pair_precision": 0.9985677160238615,
+    "pair_recall": 0.9752675146375934,
+    "singleton_accuracy": 0.996415770609319,
+    "links": 67724,
+    "true_links": 67627
+  },
+  "a9_fold_thresholds": {
+    "0": 0.84,
+    "1": 0.84,
+    "2": 0.84,
+    "3": 0.84,
+    "4": 0.84
+  },
+  "a9_all_dev_threshold": 0.84,
+  "a9_delta_vs_a8": 0.005392415308634105,
+  "a9_ci95_vs_a8": [
+    0.004566481024139992,
+    0.006205835870902749
+  ],
+  "a9_delta_vs_owner": 0.010763385666970044,
+  "a9_ci95_vs_owner": [
+    0.009803043630855606,
+    0.011807482203006866
+  ],
+  "country": {
+    "India": {
+      "a8": 0.9845355214668668,
+      "a9": 0.9910134468757598
+    },
+    "US": {
+      "a8": 0.9867887229084261,
+      "a9": 0.991491416608036
+    }
+  },
+  "sources_improved": 648,
+  "sources_worsened": 166,
+  "decisions_changed": 868,
+  "decisions_changed_in_qwen_groups": 868,
+  "errors": {
+    "a8": {
+      "true_rejected": 863,
+      "false_accepted": 277
+    },
+    "a9": {
+      "true_rejected": 525,
+      "false_accepted": 97
+    }
+  },
+  "a8_error_overlap_with_qwen_coverage": {
+    "errors": 1140,
+    "in_qwen_scored_groups": 1136
+  }
+}

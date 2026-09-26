@@ -1,0 +1,17 @@
+{
+  "base_model": "Qwen/Qwen3-Reranker-0.6B",
+  "revision": "2925c98b11f00b3364acaeb0a669f498ac45bf54",
+  "pairs_sha256": "450592c72123e7e53b8112198cf31fc5e8405a8f6b985a3e13ef3c7beb4e4a7f",
+  "rows": 16,
+  "steps": 2,
+  "batch_size": 8,
+  "accumulate": 1,
+  "max_length": 320,
+  "learning_rate": 2e-05,
+  "seed": 20260927,
+  "lora_rank": 16,
+  "lora_alpha": 32,
+  "trainable_parameters": 10092544,
+  "steps_completed": 2,
+  "elapsed_seconds": 3.7676316499710083
+}

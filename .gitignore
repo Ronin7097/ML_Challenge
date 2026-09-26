@@ -14,3 +14,7 @@ student_resource/.output_advanced-*/
 __pycache__/
 catboost_info/
 .darpa_remote.json
+student_resource/code/darpa_dense/work/
+student_resource/code/darpa_dense/logs/
+student_resource/code/darpa_dense/bin/
+student_resource/code/darpa_dense/tmp/

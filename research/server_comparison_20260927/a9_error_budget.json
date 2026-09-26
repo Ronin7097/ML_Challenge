@@ -1,0 +1,113 @@
+{
+  "scope": "opened development only; oracle gains are not additive",
+  "checks": {
+    "sources": 19991,
+    "truth": 69342,
+    "duplicate_winners": 0,
+    "duplicate_oof_targets": 0,
+    "wrong_oof_labels": 0,
+    "wrong_truth_counts": 0
+  },
+  "baseline": {
+    "macro_f05": 0.991305713496106,
+    "tp": 67627,
+    "fp": 97,
+    "fn": 1715
+  },
+  "stages": {
+    "retrieval_miss": {
+      "truth_links": 386,
+      "sources": 373,
+      "country_links": {
+        "US": 231,
+        "India": 155
+      },
+      "qwen_scored_truth_links": 0,
+      "oracle_macro_gain": 0.0020551242765207145,
+      "oracle_removes_dev_false_links": 6,
+      "country_oracle_gain": {
+        "US": 0.0017063063647742441,
+        "India": 0.002604107172515158
+      }
+    },
+    "wrong_owner": {
+      "truth_links": 761,
+      "sources": 721,
+      "country_links": {
+        "US": 492,
+        "India": 269
+      },
+      "qwen_scored_truth_links": 758,
+      "oracle_macro_gain": 0.003520186253507026,
+      "oracle_removes_dev_false_links": 10,
+      "country_oracle_gain": {
+        "US": 0.0035350131530387037,
+        "India": 0.0034968511151170136
+      }
+    },
+    "row_gate": {
+      "truth_links": 43,
+      "sources": 41,
+      "country_links": {
+        "US": 31,
+        "India": 12
+      },
+      "qwen_scored_truth_links": 22,
+      "oracle_macro_gain": 0.0002050292508051456,
+      "oracle_removes_dev_false_links": 0,
+      "country_oracle_gain": {
+        "US": 0.0002527177198473501,
+        "India": 0.00012997532450517038
+      }
+    },
+    "rejected_true_winner": {
+      "truth_links": 525,
+      "sources": 510,
+      "country_links": {
+        "US": 340,
+        "India": 185
+      },
+      "qwen_scored_truth_links": 525,
+      "oracle_macro_gain": 0.0022154366085546497,
+      "oracle_removes_dev_false_links": 0,
+      "country_oracle_gain": {
+        "US": 0.002336303780894343,
+        "India": 0.002025211255821238
+      }
+    },
+    "false_accept": {
+      "links": 97,
+      "sources": 97,
+      "singleton_false_links": 4,
+      "oracle_macro_gain": 0.0011485463843406657
+    }
+  },
+  "source_hash": "9d8e7e38e94bf13bd249ec634f39fbf90ce6bf6422facf9791ef9a67585bc770",
+  "candidate_oracle_macro": 0.9981638265914101,
+  "row_gate_population": [
+    {
+      "country": "US",
+      "winners": 57062,
+      "below_gate": 12547.0
+    },
+    {
+      "country": "India",
+      "winners": 36225,
+      "below_gate": 7794.0
+    }
+  ],
+  "winner_rejection_slices": [
+    {
+      "country": "US",
+      "qwen_present": true,
+      "n": 3112,
+      "true_links": 340.0
+    },
+    {
+      "country": "India",
+      "qwen_present": true,
+      "n": 2110,
+      "true_links": 185.0
+    }
+  ]
+}

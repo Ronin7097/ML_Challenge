@@ -1,0 +1,5 @@
+{
+  "records_compared": 1000,
+  "saved_tokenizer_identical_to_base": true,
+  "warning": "Transformers Mistral regex warning observed for local Granite path; tokens matched without modifying regex."
+}
