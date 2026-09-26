@@ -143,7 +143,10 @@ def main():
             chunks.append(np.column_stack([x[offset],extra]))
             target_rows.append(table["target_row"].to_numpy()[offset]);owner_rows.append(table["owner_row"].to_numpy()[offset])
         tr,ow=np.concatenate(target_rows),np.concatenate(owner_rows)
-        x=incoming_context(ow,np.concatenate(chunks),len(ids))
+        raw_winners=np.concatenate(chunks).astype(np.float32)
+        pq.write_table(pa.table({'target_row':tr,'owner_row':ow,**{n:raw_winners[:,j] for j,n in enumerate(WINNER_NAMES)}}),
+                       a.output/f'all_winners_{country}.parquet',compression='zstd')
+        x=incoming_context(ow,raw_winners,len(ids))
         # Context of selected owners is complete: any target capable of selecting
         # them was included with all k rivals. Other owners' aggregates are partial
         # and MUST NOT be fitted or evaluated.

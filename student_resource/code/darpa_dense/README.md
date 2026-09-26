@@ -71,15 +71,18 @@ The requested upgrade order is **HN1** (mined hard-negative continuation),
 **SEL1** (owner selection with rejection), **Q4B1** (bounded 4B comparison), then
 **MV1** (multiple positive views if retrieval misses remain). Research sources and
 their limitations are in `research/ONLINE_APPROACH_UPGRADES_20260927.md` at the
-repository root. Keep the pilot/control running. Compare identical tune entities,
+repository root. Compare identical tune entities,
 candidate budgets and routing masks wherever the ablation permits; no benchmark
 paper supplies a DARPA score forecast.
 
-`train_mined_encoder.py` implements a separate HN1 continuation, consuming the
-label-confirmed fitting pairs from `prepare_qwen.py`. It permits distinct
+`mine_hard_negatives.py` produced 100,000 positive and 100,000 label-confirmed
+wrong-owner pairs from fitting-role records. Of the wrong-owner pairs, 12,217
+have the same normalized name. `train_mined_encoder.py` implements a separate
+HN1 continuation from the pilot checkpoint, consuming these pairs. It permits distinct
 same-name negatives while retaining same-owner and indistinguishable-text masks.
-The rectangular gradient-cache case is covered by the GPU parity test. HN1 has
-not yet been run on the full mined dataset. SEL1, Q4B1 and MV1 remain planned.
+The rectangular gradient-cache case is covered by the GPU parity test. HN1
+training completed on the full mined dataset and the full owner encoding/probe
+is in progress. SEL1, Q4B1 and MV1 remain planned.
 
 `baseline_probe.cpp` reuses the frozen predictor's functions to evaluate selected
 queries against the full record pools. `cluster/baseline.sh` first checks exact
@@ -101,6 +104,10 @@ owners, leaving the pair/context/tune/reserve owners out of reranker fitting.
 with a fixed business-matching instruction. The pinned Qwen base revision is
 `2925c98b11f00b3364acaeb0a669f498ac45bf54`, Apache-2.0. Selective production
 scoring and the Qwen-augmented final decision still need integration and testing.
+`score_qwen_groups.py` records exact retrieved owner identities and scores every
+owner in a routed group; its current routing uses only pair model probabilities,
+not labels. A bounded comparison may reuse exactly those groups. Its full-scale
+execution and final decision integration are not yet validated.
 
 ## Measured status
 
@@ -122,6 +129,8 @@ checkpoint and repeating the identical recall probe. No reserve labels are used.
 
 The Qwen 0.6B adapter training smoke completed two optimizer steps on 16 supplied
 training pairs. It is only an execution check, not a fitted competition model.
+The real adapter job is submitted to Slurm with a dependency on the full encoder
+job; the smoke result is not used for competition scoring.
 
 The 300-step encoder pilot is trained; its local checkpoint SHA-256 is
 `af830261e86816d5a1c6df4238d6c825deabbd5f1bd9cd2972d160bb4897bca9`.
