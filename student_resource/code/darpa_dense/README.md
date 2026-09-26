@@ -130,7 +130,14 @@ The completed one-million-pair full encoder reaches **0.9953780 at k=10**,
 104 more true owners at k=10 than HN1. Its report is
 `reports/full_retrieval_probe.json`. We are processing the full train target
 pool with both runs; full encoder is the preferred candidate for pair/context
-modeling, subject to a complete paired F0.5 comparison.
+modeling, subject to a complete paired F0.5 comparison. Full retrieval completed
+for every training target (4,133,346 India; 6,186,873 US), and complete-rival
+features were built for 655,543 India and 1,301,474 US target groups. The feature
+files include all ten retrieved owners for each selected group; 19,570,170 pair
+rows in total. Every target group was scanned; feature extraction omitted only
+groups whose ten owners were all outside the pair, context, and tune roles.
+Pair/context model fitting and the exact paired
+tune F0.5 evaluation have been submitted on Slurm.
 The frozen baseline retrieves 0.9876013 of true links with 160 targets per Source
 1 on these tune entities. These have different candidate directions and budgets;
 the challenger needs all-target processing before its exact total budget is known.
@@ -142,8 +149,12 @@ running on the A6000 server. No reserve labels are used.
 
 The Qwen 0.6B adapter training smoke completed two optimizer steps on 16 supplied
 training pairs. It is only an execution check, not a fitted competition model.
-The real adapter job is submitted to Slurm with a dependency on the full encoder
-job; the smoke result is not used for competition scoring.
+The real Qwen adapter finished 3,125 optimizer steps over 200,000 mined fitting
+pairs (100,000 positive and 100,000 confirmed wrong-owner). Its completion
+manifest and adapter are retained on the Slurm server. A separate bounded run
+will score 1,000 routed owner groups per country to test inference cost and
+group identity checks before any full selective use. This training completion
+does not establish a challenge F0.5 gain.
 
 The 300-step encoder pilot is trained; its local checkpoint SHA-256 is
 `af830261e86816d5a1c6df4238d6c825deabbd5f1bd9cd2972d160bb4897bca9`.
