@@ -1,6 +1,6 @@
 # Business entity resolution pipeline
 
-The improved pipeline uses a CatBoost pair scorer, candidate context, and an unlabelled index of all Source 1 records to compare competing matches. The final threshold maximizes the official macro F₀.₅ on a separate tuning split. A further audit split is excluded from fitting, early stopping, error inspection, and threshold selection.
+The improved pipeline uses a CatBoost pair scorer, candidate context, and an unlabelled index of all Source 1 records to compare competing matches. A decision rule chooses how many candidates to return for each entity by approximating expected F₀.₅, including the empty-set option. It was selected on a separate tuning split. A further audit split is excluded from fitting, early stopping, error inspection, and decision selection.
 
 ## Inference
 
@@ -48,20 +48,20 @@ clang++ -O3 -std=c++17 -o "$ER_EXP/resolver_advanced" "$ER_CODE/src/advanced.cpp
 .venv/bin/python "$ER_CODE/src/prepare_reference.py" "$ER_EXP/resolver_advanced" \
   student_resource "$ER_EXP/large" "$ER_EXP/pair_large" "$ER_EXP/reference"
 .venv/bin/python "$ER_CODE/src/train_context.py" "$ER_EXP/large" "$ER_EXP/pair_large" \
-  "$ER_EXP/context" --iterations 1600 --depth 7 --threads 6 --entity-weight 0.5 \
+  "$ER_EXP/context" --iterations 1800 --depth 7 --threads 6 --entity-weight 0.5 \
   --reference-features "$ER_EXP/reference"
 ```
 
 The exact selected settings are recorded in `models/validation.json`; compare them with this recipe when reproducing a particular model. Smaller configurations use the original `advanced` export and 6,000 reserved context entities.
 
-After freezing the model and threshold, evaluate the audit split once and verify portable inference:
+Select the decision rule using tuning data, verify portable inference, then freeze the configuration and evaluate the audit split once:
 
 ```sh
-.venv/bin/python "$ER_CODE/src/train_context.py" "$ER_EXP/large" "$ER_EXP/pair_large" \
-  "$ER_EXP/context" --iterations 1600 --depth 7 --threads 6 --entity-weight 0.5 \
-  --reference-features "$ER_EXP/reference" --load "$ER_EXP/context/model.cbm" --audit
+.venv/bin/python "$ER_CODE/src/decision_policy.py" "$ER_EXP/large" "$ER_EXP/context" \
+  --kind expected_f0.5
 .venv/bin/python "$ER_CODE/src/verify_advanced.py" "$ER_EXP/resolver_advanced" \
   "$ER_EXP/large" "$ER_EXP/pair_large" "$ER_EXP/context" --reference-features "$ER_EXP/reference"
+.venv/bin/python "$ER_CODE/src/audit_model.py" "$ER_EXP/large" "$ER_EXP/pair_large" "$ER_EXP/context"
 .venv/bin/python "$ER_CODE/src/package_model.py" "$ER_EXP/large" "$ER_EXP/pair_large" \
   "$ER_EXP/context" "$ER_CODE/models"
 ```
@@ -74,7 +74,7 @@ Do not retune after inspecting audit results and still call that split untouched
 - **Pair scorer:** 107 float features describing character/token agreement, fuzzy overlap, legal suffixes, missing addresses, alphanumeric components, and approximate transliteration/sound similarities. Character rules come from Python's bundled Unicode character names and are checked into `transliteration_data.h`.
 - **Context scorer:** pair logits, other candidates' confidence and source agreement, competing Source 1 scores, name frequency/rarity, and numerical error patterns. Features never contain ground-truth match counts or labels. Optional entity weighting uses training labels only as loss weights.
 - **Competing references:** an index of unlabelled Source 1 records is constructed separately for train or test. Validation input fields can appear in this index, just as all test input fields do during deployment; validation labels do not participate in these features.
-- **Selection:** exact score-tie-aware threshold sweep over macro F₀.₅. Unretrieved true links remain in the denominator; correctly empty singleton predictions score 1.
+- **Selection:** compare the empty set with each prefix of candidates sorted by context probability. For a prefix of size `k`, approximate expected F₀.₅ with `1.25 × sum(p[:k]) / (k + 0.25 × sum(p))`; the empty-set utility is `product(1-p)`. This is an approximation, not the exact expectation of the ratio. The global threshold remains available for baseline comparisons. Evaluation includes unretrieved true links in the denominator; correctly empty singleton predictions score 1.
 
 Training and context-fitting entities are disjoint. The larger export keeps the original 6,000 tuning and 6,000 audit entities and adds fresh fitting entities, excluding all original sampled IDs. Fixed seeds, model checksums, and exported schemas document reproducibility.
 
@@ -86,6 +86,6 @@ clang++ -O3 -std=c++17 -o "$ER_EXP/test_features" "$ER_CODE/src/test_features.cp
 "$ER_EXP/test_features"
 ```
 
-These cover the challenge metric, tied thresholds, unretrieved matches, context isolation, cross-script names, accents, alphanumeric numbers, and digit omissions versus substitutions. The integration verifier compares both model scores and final decisions between Python and C++.
+These cover the challenge metric, tied thresholds, unretrieved matches, entity decision sets, context isolation, cross-script names, accents, alphanumeric numbers, and digit omissions versus substitutions. The integration verifier compares both model scores and final decisions between Python and C++.
 
 The original baseline remains reproducible using `src/main.cpp`, `model.txt`, and its `train`/`predict` commands. All approaches use only the supplied challenge data; no external business lookup, geocoding, or pretrained weights are used.

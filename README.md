@@ -23,6 +23,8 @@ For a small end-to-end check, add `--max-queries 128` and use a separate output 
 
 ## Results and reproducibility
 
+The frozen model scores **97.37% macro F₀.₅** on 6,000 untouched audit entities, up from **94.20%** for the starting boosted model on those same entities. Tuning F₀.₅ is **97.44%**. The requested **98% target was not reached**. Audit link precision is 99.43% and recall is 93.63%; these are different metrics from macro F₀.₅. See [the improvement report](student_resource/IMPROVEMENT_REPORT.md) for comparisons, validation, and limitations.
+
 See `student_resource/code/business_entity_resolution/models/validation.json` for the frozen model's tuning and audit scores, precision, recall, singleton accuracy, retrieval ceiling, and inference parity results. The metric is the official **macro F₀.₅**, including singletons and missed links outside the retrieved candidates. A tuning score is not an independent audit score or a leaderboard score.
 
 Training dependencies are pinned in `requirements.txt`. See [the implementation guide](student_resource/code/business_entity_resolution/README.md) for training commands and split safeguards. The original logistic baseline remains available in `src/main.cpp` and `model.txt`.

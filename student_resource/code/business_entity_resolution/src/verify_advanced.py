@@ -8,6 +8,7 @@ from catboost import CatBoostClassifier
 import numpy as np
 
 from train_context import context_features
+from decision_policy import select_matches
 
 
 def main():
@@ -27,6 +28,8 @@ def main():
     pair_model.load_model(str(args.pair_model / "model.cbm"))
     context_model = CatBoostClassifier()
     context_model.load_model(str(args.context_model / "model.cbm"))
+    context_report = json.loads((args.context_model / "metrics.json").read_text())
+    policy = context_report.get("decision_policy", "threshold")
     reference = None
     if args.reference_features:
         names = json.loads((args.reference_features / "schema.json").read_text())["features"]
@@ -63,12 +66,16 @@ def main():
         expected_final = context_model.predict(expected_x, prediction_type="RawFormulaVal", thread_count=2)
         actual_final = np.fromfile(output / "cpp_final.f64", dtype="<f8")
         np.testing.assert_allclose(actual_final, expected_final, rtol=1e-10, atol=1e-10)
-        threshold = json.loads((args.context_model / "metrics.json").read_text())["threshold_raw"]
-        np.testing.assert_array_equal(actual_final >= threshold, expected_final >= threshold)
+        threshold = context_report["threshold_raw"]
+        subprocess.run([str(args.executable.resolve()), "decide", str(output / "cpp_final.f64"), str(output / "cpp_decisions.u8"),
+                        str(len(features)), str(threshold), str(int(policy == "expected_f0.5"))], check=True)
+        actual_decisions = np.fromfile(output / "cpp_decisions.u8", dtype="u1").astype(bool)
+        expected_decisions = select_matches(expected_final, meta[start:stop, 0], threshold, policy)
+        np.testing.assert_array_equal(actual_decisions, expected_decisions)
         context_error = max(context_error, float(np.max(np.abs(actual_final - expected_final))))
         checked += len(features)
     result = {"queries": len(queries), "pairs": checked, "pair_max_absolute_error": pair_error,
-              "context_max_absolute_error": context_error, "identical_decisions": True}
+              "context_max_absolute_error": context_error, "identical_decisions": True, "decision_policy": policy}
     (args.context_model / "parity.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
 

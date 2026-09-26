@@ -5,7 +5,7 @@
 #include "context_features.h"
 #include <memory>
 
-static void advanced_predict(const string&base,const string&pairpath,const string&contextpath,const string&outdir,bool use_reference,int limit,int max_queries){
+static void advanced_predict(const string&base,const string&pairpath,const string&contextpath,const string&outdir,bool use_reference,int limit,int max_queries,bool expected=false){
     ifstream context_header(contextpath);string version;int context_count;context_header>>version>>context_count;
     if(!context_header||version!="ERBOOST1"||(use_reference?(context_count!=FULL_K+CONTEXT_K+14&&context_count!=FULL_K+CONTEXT_K+REFERENCE_K):context_count!=FULL_K+CONTEXT_K))throw runtime_error("Incompatible context feature schema");
     BoostModel pair_model(pairpath,FULL_K),context_model(contextpath,context_count);
@@ -23,9 +23,10 @@ static void advanced_predict(const string&base,const string&pairpath,const strin
             for(size_t j=0;j<hits.size();j++){auto&t=targets[hits[j].row];Prepared v(t,false);AdvancedPrepared av(t);
                 auto f=extended_features(q,t,u,v,hits[j].retrieval,j);auto extra=advanced_features(au,av);copy(f.begin(),f.end(),x[j].begin());copy(extra.begin(),extra.end(),x[j].begin()+BOOST_K);
                 sources.push_back(t.source);scores[j]=pair_model.raw(x[j]);if(references)reference[j]=references->features(q,t,x[j],scores[j],pair_model);}
-            auto context=make_context(x,scores,sources,reference);auto&out=output[i];
+            auto context=make_context(x,scores,sources,reference);auto&out=output[i];vector<double> final_scores;
+            for(auto&features:context)final_scores.push_back(context_model.raw(features));auto decisions=choose_matches(final_scores,context_model.threshold,expected);
             for(size_t j=0;j<hits.size();j++){auto&t=targets[hits[j].row];auto id=id_text(t.source,t.id);if(!out.candidates.empty())out.candidates+=',';out.candidates+=id;
-                if(context_model.raw(context[j])>=context_model.threshold){if(!out.matches.empty())out.matches+=',';out.matches+=id;out.links++;}}
+                if(decisions[j]){if(!out.matches.empty())out.matches+=',';out.matches+=id;out.links++;}}
         });
         for(size_t i=0;i<batch.size();i++){auto id=id_text(1,batch[i].id);matching<<id<<'\t'<<output[i].matches<<'\n';candidates<<id<<'\t'<<output[i].candidates<<'\n';links+=output[i].links;}
         done+=batch.size();if(done%1024==0)cerr<<"Predicted "<<done<<" queries; "<<links<<" links\n";if(max_queries>0&&done>=(size_t)max_queries)break;
@@ -38,6 +39,10 @@ static void score_dynamic(const string&modelpath,const string&input,const string
     if(!in||!out)throw runtime_error("Cannot open score files");
     while(in.read(reinterpret_cast<char*>(x.data()),count*sizeof(float))){double score=model.raw(x);out.write(reinterpret_cast<const char*>(&score),sizeof(score));}
     if(!in.eof()||in.gcount()!=0||!out)throw runtime_error("Incomplete score I/O");
+}
+static void verify_decisions(const string&input,const string&output,int count,double threshold,bool expected){
+    vector<double> scores(count);ifstream in(input,ios::binary);if(!in.read(reinterpret_cast<char*>(scores.data()),count*sizeof(double)))throw runtime_error("Incomplete decision scores");
+    auto decisions=choose_matches(scores,threshold,expected);ofstream out(output,ios::binary);for(bool decision:decisions){uint8_t value=decision;out.write(reinterpret_cast<const char*>(&value),1);}if(!out)throw runtime_error("Cannot write decisions");
 }
 
 static void export_context_test(const string&input,const string&scorespath,const string&sourcespath,const string&output,int count){
@@ -183,7 +188,8 @@ int main(int argc,char**argv){try{
     else if(argc==6&&string(argv[1])=="expand")expand_export(argv[2],argv[3],argv[4],argv[5]);
     else if(argc>=5&&string(argv[1])=="refresh")refresh_export(argv[2],argv[3],argv[4],argc>5?stoi(argv[5]):160);
     else if(argc==8&&string(argv[1])=="reverse")reverse_export(argv[2],argv[3],argv[4],argv[5],argv[6],stoi(argv[7]));
-    else if(argc>=6&&string(argv[1])=="predict"){if(argc>9&&stoi(argv[9]))enable_sound_blocks();advanced_predict(argv[2],argv[3],argv[4],argv[5],argc>6?stoi(argv[6])!=0:false,argc>7?stoi(argv[7]):160,argc>8?stoi(argv[8]):0);}
+    else if(argc>=6&&string(argv[1])=="predict"){if(argc>9&&stoi(argv[9]))enable_sound_blocks();advanced_predict(argv[2],argv[3],argv[4],argv[5],argc>6?stoi(argv[6])!=0:false,argc>7?stoi(argv[7]):160,argc>8?stoi(argv[8]):0,argc>10?stoi(argv[10])!=0:false);}
+    else if(argc==7&&string(argv[1])=="decide")verify_decisions(argv[2],argv[3],stoi(argv[4]),stod(argv[5]),stoi(argv[6])!=0);
     else if(argc==6&&string(argv[1])=="score")score_dynamic(argv[2],argv[3],argv[4],stoi(argv[5]));
     else if(argc==7&&string(argv[1])=="context")export_context_test(argv[2],argv[3],argv[4],argv[5],stoi(argv[6]));
     else if(argc==3&&string(argv[1])=="romanize")cout<<romanize(argv[2])<<'\n'<<join_words(sound_words(argv[2]))<<'\n';
@@ -191,7 +197,7 @@ int main(int argc,char**argv){try{
         <<"       resolver_advanced expand BASE CACHED_EXPORT PLAN OUTPUT\n"
         <<"       resolver_advanced refresh BASE INPUT_EXPORT OUTPUT [CANDIDATES=160]\n"
         <<"       resolver_advanced reverse BASE EXPORT PAIR_MODEL SCORES OUTPUT QUERY_BEGIN\n"
-        <<"       resolver_advanced predict BASE PAIR_MODEL CONTEXT_MODEL OUTPUT [REFERENCE=0 CANDIDATES=160 MAX_QUERIES=0 PHONETIC=0]\n"
+        <<"       resolver_advanced predict BASE PAIR_MODEL CONTEXT_MODEL OUTPUT [REFERENCE=0 CANDIDATES=160 MAX_QUERIES=0 PHONETIC=0 EXPECTED_F=0]\n"
         <<"       resolver_advanced score MODEL FEATURES SCORES FEATURE_COUNT\n";return 2;}
     return 0;
 }catch(const exception&e){cerr<<"Error: "<<e.what()<<'\n';return 1;}}

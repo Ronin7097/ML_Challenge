@@ -1,0 +1,26 @@
+{
+  "model_sha256": {
+    "pair.boost": "0a775aaee64d302e290b049b1b7103c0e9ef6036a55606154971e0e451c61a9a",
+    "context.boost": "4051849c31b3c6f5b31891de8652671be9e3d03b4de4ebc473fd3cc4ffcb2474"
+  },
+  "max_queries": 128,
+  "complete_submission": false,
+  "source1_rows": 128,
+  "matched_links": 392,
+  "candidate_pairs": 20480,
+  "country_rows": {
+    "India": 57,
+    "US": 49,
+    "France": 22
+  },
+  "streaming_validator": "passed",
+  "official_validator": "passed",
+  "official_id_existence_check": true,
+  "target_ids_checked": 9969589,
+  "output_sha256": {
+    "matching_results.tsv": "872a85b36969f334b710c6007331786324a108abacaef66beff375d3bac282c7",
+    "candidate_pairs.tsv": "31f891ec7b29ba4f8a9aee7c21ff1ba987222993693fc0d98f2e6e4201d7769d"
+  },
+  "python_unit_tests_passed": 11,
+  "cpp_feature_checks": "passed"
+}

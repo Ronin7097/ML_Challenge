@@ -1,0 +1,17 @@
+{
+  "format": "ERBOOST1",
+  "candidate_limit": 160,
+  "decision_policy": "expected_f0.5",
+  "phonetic_blocking": false,
+  "reference_features": true,
+  "pair_feature_count": 107,
+  "context_feature_count": 156,
+  "pair_fit_entities": 80000,
+  "context_fit_entities": 30000,
+  "tune_entities": 6000,
+  "audit_entities": 6000,
+  "sha256": {
+    "pair.boost": "0a775aaee64d302e290b049b1b7103c0e9ef6036a55606154971e0e451c61a9a",
+    "context.boost": "4051849c31b3c6f5b31891de8652671be9e3d03b4de4ebc473fd3cc4ffcb2474"
+  }
+}

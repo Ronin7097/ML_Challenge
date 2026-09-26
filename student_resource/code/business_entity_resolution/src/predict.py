@@ -37,7 +37,8 @@ def main():
     environment = dict(os.environ, ER_THREADS=str(args.threads))
     subprocess.run([str(executable), "predict", str(args.base), str(args.models / "pair.boost"),
                     str(args.models / "context.boost"), str(staging), str(int(config["reference_features"])),
-                    str(config["candidate_limit"]), str(args.max_queries), str(int(config["phonetic_blocking"]))],
+                    str(config["candidate_limit"]), str(args.max_queries), str(int(config["phonetic_blocking"])),
+                    str(int(config.get("decision_policy", "threshold") == "expected_f0.5"))],
                    env=environment, check=True)
     source1 = args.base / "dataset/test/test_source1.tsv"
     if args.max_queries:

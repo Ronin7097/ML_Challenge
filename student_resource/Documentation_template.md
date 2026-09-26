@@ -6,30 +6,54 @@
 
 ## 1. Executive Summary
 
-We match each Source 1 business to Source 2 and Source 3 with rare-token blocking followed by a supervised pair scorer. Blocking combines name and address words, whole normalized names, and word pairs; a logistic model makes precision-focused decisions. The system uses only the supplied data and includes every test Source 1 entity in both output files.
+The improved matcher combines a boosted pair classifier, candidate context, and comparisons against competing Source 1 businesses. Its frozen macro F₀.₅ is **0.973744** on 6,000 untouched audit entities. The requested 0.98 target was not reached. These are local validation results, not leaderboard results. Only the supplied challenge data is used.
 
 ## 2. Methodology and Data
 
-Training has 2,206,821 Source 1 records and 7,638,365 labeled links. Some Source 2 and Source 3 records lack addresses. Names and addresses contain abbreviations, transliterations, Indic scripts, domain names, reordered words, and deliberate near misses. Test additionally includes France, which is absent from training. We treat country as an open label used to limit comparisons to the same country; the similarity features themselves are language independent.
+Training contains 2,206,821 Source 1 records. Target sources contain noisy names and addresses, missing addresses, transliterations, Indic scripts, reordered words, and near misses. Test additionally includes France, which is absent from training. Country is an open label used for comparisons; no country is excluded from prediction.
 
-The pipeline loads Source 2 and Source 3, builds an in-memory sorted inverted index, then processes Source 1 one row at a time. All candidate IDs in `candidate_pairs.tsv` are the exact records passed to the matching scorer. The final matches are selected from those candidates.
+Entity-disjoint development splits contain 80,000 pair-fitting entities, 30,000 context-fitting entities, 6,000 tuning entities, and 6,000 audit entities. The original tuning and audit IDs were preserved when expanding training data. Audit labels were excluded from training, early stopping, error inspection, and decision selection. The final model and decision rule were frozen before audit evaluation.
 
 ## 3. Candidate Generation
 
-For each target record, the index stores up to four name words, six address words, a compact normalized full name, and selected pairs of name and address words. At query time, rare postings are searched first within a bounded posting budget. Each retrieved target accumulates a weighted evidence score; the top 80 targets are passed to the final scorer. This allows recovery when an individual name word is common, and address keys help with aliases or names written in different scripts.
+Country-aware retrieval combines name and address tokens, token pairs, normalized whole fields, consonants, and numerical address keys. Bounded retrieval and similarity reranking retain up to 160 candidates per entity. Every final match is drawn from the recorded candidate set.
 
-On an 18,000-entity random sample of training Source 1, this stage retrieved **57,020 of 62,300 known links (91.5%)** in the top 80. Inference produced **138,056,331 test candidate pairs**. Output rows with no candidates retain an empty ID list.
+Audit candidate recall is **97.486%**. With perfect decisions on these candidates, the audit macro F₀.₅ ceiling is **99.158%**. Unretrieved true links remain in all evaluation denominators.
 
 ## 4. Matching Model
 
-The final model is logistic regression trained on labeled generated candidates from 12,000 sampled training Source 1 entities. Features are name and address character-trigram Dice similarity, token overlap and Jaccard similarity, name containment, similarity interactions, numerical-address overlap and first-number agreement or conflict, exact normalized name agreement, legal-suffix-insensitive name agreement, missing-address status, and Indic-script mismatch with address similarity. The code and trained model are MIT licensed, and the model has 20 scalar coefficients.
+The pair classifier uses 107 numerical features describing character/token overlap, fuzzy agreement, legal suffixes, missing addresses, alphanumeric components, and approximate transliteration/sound similarities. CatBoost training starts on a smaller fitting sample, then continues on the larger fitting set, producing 2,999 trees.
 
-Another 6,000 sampled Source 1 entities are held out for threshold selection and evaluation. The threshold is chosen to maximize the specified **macro F₀.₅** across all held-out entities, including singletons. The selected threshold is **0.83**. No external business data or pretrained model is used.
+The context classifier uses 156 features: the 107 pair features, 23 summaries of other candidates' probabilities and sources, and 26 features comparing competing Source 1 businesses, name rarity, and numerical errors. It has 1,800 depth-7 trees and is fitted on the separate 30,000-entity context split.
 
-## 5. Results and Error Analysis
+The reference index contains unlabelled Source 1 input fields from the corresponding train or test data. Validation fields can participate in this index, matching deployment behavior, but their labels never enter features. Transliteration rules are generated from Python's bundled Unicode character names. No external business lookup, geocoding, or pretrained weights are used.
 
-**Held-out macro F₀.₅: 0.8287.** This is a local validation estimate, not a leaderboard score. Full test inference selected **5,270,344 links**. Remaining false positives are often distinct businesses with almost identical names and addresses but a changed street or unit number. Remaining false negatives include aliases, heavy misspellings, and links with empty addresses or transliterated names. The 91.5% candidate recall limits the model's maximum possible link recall.
+For each entity, the decision rule compares the empty set with successive prefixes of candidates ranked by context probability. A prefix of size k has utility `1.25 × sum(p[:k]) / (k + 0.25 × sum(p))`; the empty-set utility is `product(1-p)`. This approximates expected F₀.₅. Actual evaluation uses the official macro metric, including singletons and unretrieved truth.
 
-## 6. Reproduction
+## 5. Results and Limitations
 
-`code/business_entity_resolution/src/main.cpp` implements training and inference. The same directory contains the trained `model.txt`, `README.md` with exact build and run commands, `requirements.txt`, and an MIT license. `output/matching_results.tsv` is the leaderboard file; `output/candidate_pairs.tsv` documents the scored candidates. The standard-library C++17 implementation is deterministic for the provided inputs and fixed seeds.
+| Configuration | Tuning macro F₀.₅ | Audit macro F₀.₅ |
+|---|---:|---:|
+| Original logistic baseline | 82.87% | 83.39% |
+| Starting boosted model | 94.15% | 94.20% |
+| Improved frozen model | **97.44%** | **97.37%** |
+
+The improved model's audit link precision is **99.43%**, link recall **93.63%**, and singleton accuracy **97.43%**. Compared with the starting boosted model, audit macro F₀.₅ improves by **3.18 percentage points** on identical entities; the approximate paired 95% interval is **2.85–3.50 points**.
+
+Audit F₀.₅ is 96.70% for India and 97.82% for the US. There is no labelled France audit, so these results do not establish French test accuracy. Candidate misses and difficult aliases/numerical near misses still limit performance. The audit was not used to make further model changes.
+
+## 6. Reproduction and Submission Status
+
+`code/business_entity_resolution/README.md` gives the training, frozen audit, and portable-inference commands. `models/` contains the portable pair/context models, checksums, settings, and validation results. Python/C++ parity was verified on 3,200 tuning pairs with zero raw-score error and identical final decisions.
+
+The packaged model passed a 128-row test smoke run and the official submission validator, including target-ID existence checks. Eleven Python unit tests and the C++ feature checks passed. Smoke outputs cover India, the US, and France; they verify execution and formatting, not test accuracy.
+
+Run from the repository root:
+
+```sh
+python3 student_resource/code/business_entity_resolution/src/predict.py student_resource student_resource/output_advanced --threads 6
+```
+
+Inference requires a C++17 compiler and Python 3; third-party Python packages are needed only for training and development evaluation. The runner preserves existing outputs, validates completed files, and records model checksums. `--max-queries 128` produces only a smoke-test prefix.
+
+**The existing `output/` files and `ML_Challenge_submission.zip` still contain the logistic baseline predictions.** They have not been regenerated with this model. Generate the full improved output before building a new competition submission archive. The implementation and models use the repository's MIT license.

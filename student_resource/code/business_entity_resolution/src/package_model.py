@@ -25,12 +25,14 @@ def main():
         raise ValueError("Pair and context feature schemas differ")
     if "audit" not in context["splits"] or not parity["identical_decisions"]:
         raise ValueError("An untouched audit evaluation and successful inference parity check are required")
+    if parity.get("decision_policy", "threshold") != context.get("decision_policy", "threshold"):
+        raise ValueError("Verify the final decision policy before packaging")
     args.output.mkdir(parents=True, exist_ok=True)
     for source, destination in [(args.pair_model / "model.boost", "pair.boost"), (args.context_model / "model.boost", "context.boost")]:
         shutil.copyfile(source, args.output / destination)
     digests = {name: hashlib.sha256((args.output / name).read_bytes()).hexdigest() for name in ["pair.boost", "context.boost"]}
     reserve = pair["configuration"]["calibration_queries"]
-    config = {"format": "ERBOOST1", "candidate_limit": schema["candidate_limit"],
+    config = {"format": "ERBOOST1", "candidate_limit": schema["candidate_limit"], "decision_policy": context.get("decision_policy", "threshold"),
               "phonetic_blocking": schema.get("phonetic_blocking", False),
               "reference_features": bool(context["configuration"].get("reference_features")),
               "pair_feature_count": schema["feature_count"], "context_feature_count": context["feature_count"],
@@ -44,6 +46,8 @@ def main():
                                                             "pair_training": pair["configuration"], "context_training": context["configuration"]}, indent=2) + "\n")
     shutil.copyfile(args.context_model / "metrics.json", args.output / "context_metrics.json")
     shutil.copyfile(args.pair_model / "metrics.json", args.output / "pair_metrics.json")
+    if (args.context_model / "audit_comparison.json").exists():
+        shutil.copyfile(args.context_model / "audit_comparison.json", args.output / "audit_comparison.json")
     audit = context["splits"]["audit"]
     print(f"Packaged audited macro F0.5 {audit['macro_f0.5']:.6f} in {args.output}")
 

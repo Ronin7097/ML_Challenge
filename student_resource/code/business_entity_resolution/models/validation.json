@@ -1,0 +1,82 @@
+{
+  "metric": "macro F0.5 including singletons and unretrieved true links",
+  "requested_target": 0.98,
+  "target_reached_on_audit": false,
+  "splits": {
+    "tune": {
+      "macro_f0.5": 0.9744221439871532,
+      "standard_error": 0.0011952870081660372,
+      "precision": 0.9938541243396993,
+      "recall": 0.9373862220944716,
+      "tp": 19567,
+      "fp": 121,
+      "fn": 1307,
+      "entities": 6000,
+      "singleton_accuracy": 0.9716088328075709,
+      "baseline_macro_f0.5": 0.8286541453767097,
+      "paired_improvement_95ci": [
+        0.13956881737216553,
+        0.15196717984872138
+      ],
+      "candidate_recall": 0.9746574686212514,
+      "retrieval_oracle_macro_f0.5": 0.9912616915337071,
+      "by_country": {
+        "India": 0.9694197389520334,
+        "US": 0.9777339855478003
+      }
+    },
+    "audit": {
+      "macro_f0.5": 0.9737442188439884,
+      "standard_error": 0.0012555989785234705,
+      "precision": 0.9942719787244924,
+      "recall": 0.9362839529955692,
+      "tp": 19441,
+      "fp": 112,
+      "fn": 1323,
+      "entities": 6000,
+      "singleton_accuracy": 0.9742857142857143,
+      "baseline_macro_f0.5": 0.8339456555544357,
+      "paired_improvement_95ci": [
+        0.133776445687686,
+        0.14582068089141956
+      ],
+      "candidate_recall": 0.9748603351955307,
+      "retrieval_oracle_macro_f0.5": 0.9915829430272987,
+      "by_country": {
+        "India": 0.9670488654859783,
+        "US": 0.9782264170018552
+      }
+    }
+  },
+  "parity": {
+    "queries": 20,
+    "pairs": 3200,
+    "pair_max_absolute_error": 0,
+    "context_max_absolute_error": 0,
+    "identical_decisions": true,
+    "decision_policy": "expected_f0.5"
+  },
+  "pair_training": {
+    "export": "student_resource/experiments/boost_large",
+    "output": "student_resource/experiments/model_large",
+    "iterations": 1200,
+    "depth": 8,
+    "threads": 6,
+    "learning_rate": 0.035,
+    "negative_rank": 40,
+    "calibration_queries": 30000,
+    "audit": false,
+    "load": null,
+    "init_model": "student_resource/experiments/model_v3/model.cbm"
+  },
+  "context_training": {
+    "export": "student_resource/experiments/boost_large",
+    "pair_model": "student_resource/experiments/model_large",
+    "calibration_begin": 80000,
+    "calibration_end": 110000,
+    "iterations": 1800,
+    "depth": 7,
+    "entity_weight": 0.5,
+    "reference_features": "student_resource/experiments/reference_large"
+  }
+}

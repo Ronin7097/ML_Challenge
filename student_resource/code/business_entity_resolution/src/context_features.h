@@ -1,6 +1,15 @@
 static constexpr int FULL_K=BOOST_K+ADVANCED_K, CONTEXT_K=23;
 using FullFeatures=array<float,FULL_K>;
 
+static vector<bool> choose_matches(const vector<double>&scores,double threshold,bool expected){
+    vector<bool> chosen(scores.size(),false);if(!expected){for(size_t i=0;i<scores.size();i++)chosen[i]=scores[i]>=threshold;return chosen;}
+    vector<size_t> order(scores.size());iota(order.begin(),order.end(),0);stable_sort(order.begin(),order.end(),[&](size_t a,size_t b){return scores[a]>scores[b];});
+    vector<double> p;double total=0,log_empty=0;for(auto i:order){double value=1/(1+exp(-max(-50.,min(50.,scores[i]))));p.push_back(value);total+=value;log_empty+=log1p(-min(value,1-1e-15));}
+    double best=exp(log_empty),sum=0;size_t count=0;
+    for(size_t i=0;i<p.size();i++){sum+=p[i];double utility=1.25*sum/(i+1+.25*total);if(utility>best){best=utility;count=i+1;}}
+    for(size_t i=0;i<count;i++)chosen[order[i]]=true;return chosen;
+}
+
 static vector<vector<float>> make_context(const vector<FullFeatures>&features,const vector<double>&scores,const vector<uint8_t>&sources,
                                          const vector<ReferenceFeatures>&reference={}){
     size_t n=features.size();vector<vector<float>> result(n);vector<double> p(n);vector<size_t> order(n),rank(n);iota(order.begin(),order.end(),0);
