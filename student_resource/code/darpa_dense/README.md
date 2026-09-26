@@ -4,6 +4,7 @@ This is a separate experiment. The frozen CatBoost submission and its ZIP remain
 the reproducible fallback. On 27 September 2026 the user reported DARPA's Portal
 macro F0.5 as **0.9608**. Their screenshot shows Banana at **0.990816**. The local
 CatBoost audit is 0.9737442188439884 on a different population.
+Measured variants and failures are recorded in [EXPERIMENTS.md](EXPERIMENTS.md).
 
 The architecture follows the target-to-Source-1 retrieval idea documented in
 `SERVER_APPROACH_REVIEW.md`: contrastively train a multilingual encoder using only
@@ -119,7 +120,9 @@ learns from whole shortlisted owner groups after the pair model, chooses among
 all ten owners, and rejects a group when its best probability falls below a
 tuned no-match threshold. It fits on the separate context role and evaluates on
 the tune role. A synthetic end-to-end role/identity check passed; challenge
-performance is not yet measured.
+performance measured **0.9798410958066807** macro F0.5 on the same tune cohort.
+This is above the frozen baseline but below the current pair/context challenger
+by 0.0031180, so SEL1 is not selected as a replacement policy.
 
 ## Measured status
 
