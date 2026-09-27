@@ -1,0 +1,54 @@
+{
+  "evaluation": "name-group development tune; not Portal",
+  "entities": 7882,
+  "macro_f05": 0.9846719727965129,
+  "links": {
+    "tp": 26543,
+    "fp": 179,
+    "fn": 718
+  },
+  "singleton_entities": 407,
+  "singleton_accuracy": 0.9803439803439803,
+  "strata": {
+    "country:India": {
+      "entities": 2778,
+      "macro_f05": 0.9814071179378934,
+      "baseline_macro_f05": 0.9782952031098318,
+      "paired_delta": 0.003111914828061441
+    },
+    "country:US": {
+      "entities": 5104,
+      "macro_f05": 0.9864489647238727,
+      "baseline_macro_f05": 0.9856093885869165,
+      "paired_delta": 0.0008395761369562876
+    },
+    "name_frequency:1": {
+      "entities": 5516,
+      "macro_f05": 0.9894176055395224,
+      "baseline_macro_f05": 0.9881060373041026,
+      "paired_delta": 0.0013115682354197873
+    },
+    "name_frequency:2-5": {
+      "entities": 1940,
+      "macro_f05": 0.9755998465810432,
+      "baseline_macro_f05": 0.972819765559561,
+      "paired_delta": 0.0027800810214822684
+    },
+    "name_frequency:6+": {
+      "entities": 426,
+      "macro_f05": 0.9645382043635792,
+      "baseline_macro_f05": 0.9638289827036534,
+      "paired_delta": 0.000709221659925885
+    }
+  },
+  "paired": {
+    "baseline_macro_f05": 0.9830315140302885,
+    "delta": 0.0016404587662242544,
+    "name_groups": 6330,
+    "bootstrap_replicates": 2000,
+    "delta_95pct_interval": [
+      0.0006934531392244507,
+      0.0025768335132960746
+    ]
+  }
+}

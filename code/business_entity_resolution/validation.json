@@ -1,0 +1,52 @@
+{
+  "official_both_files_and_ids": "PASS",
+  "match_subset": "PASS",
+  "source1_order": "PASS",
+  "official_validator_sha256": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc",
+  "matching_sha256": "e9320c0be69b8eecde2be3447a373de0830622176b06309c9dccea37eb4c94e2",
+  "candidate_sha256": "8514f331f27485275f6f294d815d005bb063519383b8255c4c35988f02cbba34",
+  "test_sha256": {
+    "test_source1.tsv": "3d4a32c54c2ca9c53fd7c2be105bf26f708f94c4d2f88eb370972a195665c2f5",
+    "test_source2.tsv": "79d906c7497af2ace70aa277f6e334a652094909de99bd6c57b53420b6a7b2dd",
+    "test_source3.tsv": "850942b11d2a4343486ed0834e28bce9f3b385f3fd497fd60ccf4ea3b8bda035"
+  },
+  "source1_rows": 1732544,
+  "target_rows": 9969589,
+  "matches": 5958911,
+  "candidate_pairs": 99695890,
+  "mean_candidates_per_source1": 57.543063841380075,
+  "candidates_per_source1": {
+    "min": 0,
+    "median": 49,
+    "p90": 104,
+    "p95": 128,
+    "p99": 187,
+    "max": 1219,
+    "empty_rows": 1
+  },
+  "countries": {
+    "US": {
+      "source1_rows": 663106,
+      "target_rows": 3817031,
+      "matches": 2283919,
+      "candidate_pairs": 38170310,
+      "mean_candidates_per_source1": 57.56290849426789
+    },
+    "France": {
+      "source1_rows": 259452,
+      "target_rows": 1434993,
+      "matches": 884457,
+      "candidate_pairs": 14349930,
+      "mean_candidates_per_source1": 55.30861199759493
+    },
+    "India": {
+      "source1_rows": 809986,
+      "target_rows": 4717565,
+      "matches": 2790535,
+      "candidate_pairs": 47175650,
+      "mean_candidates_per_source1": 58.24254987123234
+    }
+  },
+  "validation_method": "Unmodified official validator with both TSVs and --check-ids; no warnings. Exported files are byte-identical to this fully validated run.",
+  "original_full_audit_sha256": "da8f286c51ddde680e0c9806398fc759b3cd0aecab993bdb4f714e950ed65850"
+}

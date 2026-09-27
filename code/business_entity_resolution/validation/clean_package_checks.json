@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "tests_run": 11,
+  "prediction_cli_imports": "PASS",
+  "packaged_source_matches_tested_source": "PASS",
+  "test_source_sha256": {
+    "test_gradient_cache.py": "1e6e2738c7e85ea0aa27768d71b6bd821da61d48e872841b2b41249f3eaf22af",
+    "test_rich_context.py": "c72c8eeb6bb986f5271c5f25ebf352b45e0e9244d94154b8e51a0e3f8c54e43a",
+    "test_rich_inference.py": "e51e605f1e192014fde18e1de100ef7aec4485800f989b1b2544f00cb90d8a8f",
+    "test_pair_features.py": "2c3ae60b91511c665a458858283e458298f0d744f180a8a94139a31a1d6d53f5"
+  },
+  "test_output": "...........\n----------------------------------------------------------------------\nRan 11 tests in 1.292s\n\nOK",
+  "scope": "Source tests and CLI dependency checks on the cleaned package. Full inference was not rerun for cleanup; delivered TSV/model/producing-code hashes match the completed audited run."
+}

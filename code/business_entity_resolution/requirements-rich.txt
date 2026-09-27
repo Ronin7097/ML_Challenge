@@ -1,0 +1,6 @@
+# Rich head runtime used on the CPU cluster; install after base inference.
+numpy==2.2.6
+pyarrow==23.0.0
+lightgbm==4.6.0
+rapidfuzz==3.14.1
+anyascii==0.3.3

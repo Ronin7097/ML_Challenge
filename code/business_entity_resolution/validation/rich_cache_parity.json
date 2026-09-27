@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "labels_read": false,
+  "countries": {
+    "India": {
+      "rows": 256,
+      "lexical_features": "exact",
+      "incoming_context": "exact",
+      "rich_features": "exact",
+      "runner_max_abs_difference": 0.0
+    },
+    "US": {
+      "rows": 256,
+      "lexical_features": "exact",
+      "incoming_context": "exact",
+      "rich_features": "exact",
+      "runner_max_abs_difference": 0.0
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "command": ".venv/bin/python -m unittest discover -s src -p \"test_rich_*.py\"",
+  "tests_run": 7,
+  "result": "PASS",
+  "exit_code": 0,
+  "test_sha256": {
+    "test_rich_context.py": "c72c8eeb6bb986f5271c5f25ebf352b45e0e9244d94154b8e51a0e3f8c54e43a",
+    "test_rich_inference.py": "e51e605f1e192014fde18e1de100ef7aec4485800f989b1b2544f00cb90d8a8f"
+  }
+}

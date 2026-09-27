@@ -1,0 +1,95 @@
+{
+  "complete_submission": true,
+  "split": "test",
+  "role": "",
+  "source1_rows": 1732544,
+  "countries": {
+    "France": {
+      "source1_rows": 259452,
+      "target_rows": 1434993,
+      "routed": 454672,
+      "matches": 884457,
+      "seconds": 83.37470456957817
+    },
+    "India": {
+      "source1_rows": 809986,
+      "target_rows": 4717565,
+      "routed": 1561491,
+      "matches": 2790535,
+      "seconds": 307.59861338324845
+    },
+    "US": {
+      "source1_rows": 663106,
+      "target_rows": 3817031,
+      "routed": 918222,
+      "matches": 2283919,
+      "seconds": 174.6135527845472
+    }
+  },
+  "policy_sha256": "205b668628d86af18dba430b26e125cedc7544a5f8dad28707b2a55d9b0a927a",
+  "model_complete_sha256": "e459e988ce66a61e0d995b091bbf70c6929dc939c12bf149e19f6f486b2923d9",
+  "base_run_sha256": "a67053d0098539b44395e35f7c83113d04d9e36042d198e1d61e97050460cdb5",
+  "code_sha256": {
+    "predict_rich.py": "4fa27c12849740e003a1f6d505dd0631db303ffca3c0db194a877dce7abc1523",
+    "rich_context.py": "13074217094d842fbfebe548adc6f4954e0f6646762b60bee97a789f9be78f91",
+    "fit_owner.py": "abda9eb03fccc1414cce7507a03a277b28bee5a26af636e1738c90512dce669a",
+    "pair_features.py": "d9c3daa9e13c603160f3bde183ca14f4c7b5c5496310cd93a358e2372af66b85"
+  },
+  "dependency_versions": {
+    "anyascii": "0.3.3",
+    "lightgbm": "4.6.0",
+    "numpy": "2.2.6",
+    "pyarrow": "23.0.0",
+    "rapidfuzz": "3.14.1"
+  },
+  "inputs": {
+    "France": {
+      "source": "190679ef405fbf61c1b3556301851b964b241900004d03a422c1d933ae121a90",
+      "target": "b5e67ee6f95574f4130d450ad6d52138df5a38c8bf49380b02072591a04575f5",
+      "retrieval": {
+        "model_sha256": "192974ed0c8ed02ee2c48dad6dbf3d7447143b18fe7cd91d2bb8b5a106b931bd",
+        "target_sha256": "b5e67ee6f95574f4130d450ad6d52138df5a38c8bf49380b02072591a04575f5",
+        "source_sha256": "190679ef405fbf61c1b3556301851b964b241900004d03a422c1d933ae121a90",
+        "rows": 1434993,
+        "owner_rows": 259452,
+        "k": 10,
+        "max_length": 96,
+        "batch_size": 512,
+        "retrieval": "exhaustive normalized float16 GPU inner product"
+      }
+    },
+    "India": {
+      "source": "8134e9e7a2542710283f40dcdb4d1d32683880be33501c04d3bdfbf758c9d261",
+      "target": "51a5b48011a835cd0f57dbd84d4a86e21f5b91e8cd5ec142ca45989417a8a837",
+      "retrieval": {
+        "model_sha256": "192974ed0c8ed02ee2c48dad6dbf3d7447143b18fe7cd91d2bb8b5a106b931bd",
+        "target_sha256": "51a5b48011a835cd0f57dbd84d4a86e21f5b91e8cd5ec142ca45989417a8a837",
+        "source_sha256": "8134e9e7a2542710283f40dcdb4d1d32683880be33501c04d3bdfbf758c9d261",
+        "rows": 4717565,
+        "owner_rows": 809986,
+        "k": 10,
+        "max_length": 96,
+        "batch_size": 512,
+        "retrieval": "exhaustive normalized float16 GPU inner product"
+      }
+    },
+    "US": {
+      "source": "010b1f7d01e47b9fffaef2222703234fc76639376839de95e2b6f565de2d24b8",
+      "target": "b689b6830bcea8a9727ea70b769753183997ec6c43d6db6d6d5edecfd46131d0",
+      "retrieval": {
+        "model_sha256": "192974ed0c8ed02ee2c48dad6dbf3d7447143b18fe7cd91d2bb8b5a106b931bd",
+        "target_sha256": "b689b6830bcea8a9727ea70b769753183997ec6c43d6db6d6d5edecfd46131d0",
+        "source_sha256": "010b1f7d01e47b9fffaef2222703234fc76639376839de95e2b6f565de2d24b8",
+        "rows": 3817031,
+        "owner_rows": 663106,
+        "k": 10,
+        "max_length": 96,
+        "batch_size": 512,
+        "retrieval": "exhaustive normalized float16 GPU inner product"
+      }
+    }
+  },
+  "matching_sha256": "e9320c0be69b8eecde2be3447a373de0830622176b06309c9dccea37eb4c94e2",
+  "candidate_sha256": "8514f331f27485275f6f294d815d005bb063519383b8255c4c35988f02cbba34",
+  "reserve_labels_read": false
+}

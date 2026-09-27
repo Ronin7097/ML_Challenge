@@ -1,0 +1,26 @@
+{
+  "encoder_parameters": 97441152,
+  "encoder_license": "Apache-2.0",
+  "tree_model_license": "MIT",
+  "files_sha256": {
+    "encoder/config.json": "ae74d55a56f779774cb9a8e63d3c2da9ae1af83c00229ffdff43d0b38407a0ee",
+    "encoder/model.safetensors": "192974ed0c8ed02ee2c48dad6dbf3d7447143b18fe7cd91d2bb8b5a106b931bd",
+    "encoder/special_tokens_map.json": "013787ee251ff611722479197c00853b62113ad303cb0a36524231783c676c69",
+    "encoder/tokenizer.json": "5afa4f928d55675ffacf248901a715be51820df69d8d45d8e7a79a994df4c4e3",
+    "encoder/tokenizer_config.json": "6ed69389e30a8ecabfce2f9ebcdf0c908b34056f24d994340f2f216521c057d5",
+    "owner/complete.json": "6c71b346b9df40bb2ccf8fb501412451e64287c12db441b173a03549b5b44dde",
+    "owner/context_0.txt": "4226eb84af2e81f355ec0ee498f817cf27fcf718de535927e40a281b36413f40",
+    "owner/context_1.txt": "967d8f07b1a2ae843f6a6cc4a970325760e3125e2176932604046f1f55ea0e9b",
+    "owner/context_2.txt": "4fc1bb06c33f55e35621e9cebe43fac90f0fb540cbdcd875a229fcde05ecf2a4",
+    "owner/context_3.txt": "40c016e20a62a7c6b8b6ed0602bfc7b0c1f9e4e50c89eff75e183a4984c24e93",
+    "owner/context_4.txt": "b9797e69312ea7a57640ffc1f340717e5dd77ff2068325d9a84ab41e48e96d0a",
+    "owner/pair.txt": "29359310b404e01d42ed68b9588b35d3b2c13ae5f7353d382ec781eb826ade01",
+    "rich/complete.json": "e459e988ce66a61e0d995b091bbf70c6929dc939c12bf149e19f6f486b2923d9",
+    "rich/policy.json": "205b668628d86af18dba430b26e125cedc7544a5f8dad28707b2a55d9b0a927a",
+    "rich/rich_0.txt": "02a7e320ff7dc8807de27533456552c110e93f7194ae9604dbf42a22b096f974",
+    "rich/rich_1.txt": "6f52e952ee1c2dbbad0fe539d2951e17190cfac7ccb9d56b4901983d00d898c0",
+    "rich/rich_2.txt": "5cfdee661a9bee2326094182bfd341095358ec36da6e0eec0c118b536f4ef8b2",
+    "rich/rich_3.txt": "165af220bf56ea55ef0bb4cb21582a4c89b8a51142d615d9d0dfed7cf8168e3d",
+    "rich/rich_4.txt": "6fe5944ec61b6c2ba767a47e33e892264fdcecbfe79d916a085fee808ef92a31"
+  }
+}
