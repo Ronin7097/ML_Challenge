@@ -63,6 +63,7 @@ def main():
         prefix+'PUBLIC_APPROACH_REVIEW.md':experiment/'PUBLIC_APPROACH_REVIEW.md',
         prefix+'requirements.txt':experiment/'requirements.txt',
         prefix+'LICENSE':experiment/'LICENSE',
+        prefix+'model.txt':experiment/'model.txt',
         prefix+'validation.json':a.validation,
         prefix+'splits/previous_development_ids.txt':experiment/'splits/previous_development_ids.txt',
         'Documentation_template.md':experiment/'Documentation_template.md',
