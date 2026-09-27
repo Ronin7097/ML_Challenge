@@ -105,19 +105,24 @@ The context model's threshold is selected on tune entities only.
 owners, leaving the pair/context/tune/reserve owners out of reranker fitting.
 `train_qwen.py` fits a rank-16 LoRA adapter; `qwen_model.py` scores yes/no logits
 with a fixed business-matching instruction. The pinned Qwen base revision is
-`2925c98b11f00b3364acaeb0a669f498ac45bf54`, Apache-2.0. Selective production
-scoring and the Qwen-augmented final decision still need integration and testing.
+`2925c98b11f00b3364acaeb0a669f498ac45bf54`, Apache-2.0. Selective Qwen
+reranking was tested on the full routed tune cohort and regressed; it is not the
+selected production policy.
 `score_qwen_groups.py` records exact retrieved owner identities and scores every
 owner in a routed group; its current routing uses only pair model probabilities,
-not labels. A bounded comparison may reuse exactly those groups. Its full-scale
-execution and final decision integration are not yet validated.
+not labels. A bounded comparison may reuse exactly those groups. The scored
+tune-group identities and decision integration passed validation.
 The first 1,000-group-per-country scoring smoke stopped after 512 India groups
 because the Slurm account reached its NFS disk quota while another project was
 also using that account. This was an environment failure, not a model outcome.
 The complete model, retrieval, feature, adapter and Qwen-base inputs were moved
 to the A6000 workspace with matching file hashes. The bounded scoring smoke
-completed there. Routed scoring of tune-related groups is now running; no Qwen
-F0.5 has been measured yet.
+completed there. Selective scoring then covered all 6,110 India and 7,447 US
+routed tune groups. The best tested Qwen override policy scored 0.9741626707
+macro F0.5, below both the owner/context model (0.9829591299) and the frozen
+baseline (0.9775204401). Its 525 false-positive links and 0.91646 singleton
+accuracy make it unsuitable for promotion. The owner/context policy is selected
+for a single sealed-reserve evaluation. See `reports/qwen06_paired_tune.json`.
 
 `fit_selector.py` adds the requested **SEL1** alternative: a second LightGBM
 learns from whole shortlisted owner groups after the pair model, chooses among
@@ -143,7 +148,7 @@ difference is +0.0054387; a 2,000-replicate name-group bootstrap interval is
 `reports/full_owner_paired_tune.json`. The 0.62 decision threshold was selected
 on this tune cohort, so the resulting tune F0.5 is optimistic for generalization.
 The sealed reserve is unopened and the Portal score is unknown. SEL1 and Qwen
-could change this result and require a fresh comparison on this same tune set.
+were compared on the same tune set and did not improve this result.
 The independent frozen inference entry point, `predict_frozen.py`, reproduced
 all 7,882 tune matching rows exactly from the saved models and complete feature
 graph. Its candidate file contained 333,635 actual scored pairs and recovered

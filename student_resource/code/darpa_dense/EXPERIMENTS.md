@@ -14,7 +14,7 @@ measure different populations.
 | One-million-pair full Granite encoder | True-owner retrieval recall 0.9953780 at top 10; 104 more links than HN1 | Chosen for first full owner model; retrieval is not F0.5 |
 | Full encoder + pair LightGBM + incoming-context LightGBM | 0.9829591 macro F0.5 on same tune; +0.0054387 versus frozen baseline, paired name-group bootstrap interval [+0.0034172,+0.0076403] | Current best measured challenger. Threshold 0.62 was tuned on this cohort, so independent performance remains unmeasured |
 | SEL1: second rival-aware LightGBM chooses among ten owners and can reject all | 0.9798411 macro F0.5 on same tune; +0.0023207 versus frozen baseline but 0.0031180 below current challenger | Not promoted. Wrong-owner rescue versus regression analysis may inform a narrower combined policy |
-| Qwen3-Reranker-0.6B LoRA on 200,000 mined pairs | 3,125 optimizer steps complete; no F0.5 yet | A 2-step GPU smoke previously passed. Bounded group scoring on Slurm reached 512 India groups then hit the account's NFS disk quota; inputs copied and hash-verified to A6000 for rerun |
+| Qwen3-Reranker-0.6B LoRA on 200,000 mined pairs, selective reranking of all routed tune groups | Best tested override policy: 0.9741627 macro F0.5 on the same tune cohort; 26,573 TP, 525 FP, 688 FN | Not promoted: 0.0087965 below the owner/context model and 0.0033578 below the frozen baseline. The best sweep point used Qwen score ≥0.999 without a margin or rejection requirement; false positives increased and singleton accuracy fell to 0.91646. See [paired report](reports/qwen06_paired_tune.json) and [sweep](reports/qwen06_policy_sweep.json). |
 
 The full encoder scored all 10,320,219 training targets against every Source 1
 record in their country. Feature extraction retained all ten rival owners for
@@ -30,6 +30,13 @@ trained weights were copied into this experiment. See
 `PUBLIC_APPROACH_REVIEW.md` and the repository's
 `research/ONLINE_APPROACH_UPGRADES_20260927.md` for sources and limitations.
 
-Next gates: verify Qwen on bounded groups, test whether it improves the same
-tune cohort, freeze the selected policy, then evaluate once on the sealed reserve.
-Only then should a new full test submission replace the validated fallback.
+The Slurm bounded scoring smoke hit its account NFS quota after 512 India groups.
+The same model and inputs were transferred with exact hashes to A6000; a bounded
+smoke completed there before all 6,110 India and 7,447 US routed tune groups
+were scored. The Qwen sweep reproduced the owner/context base score before
+applying overrides, so this regression is not a base-score mismatch.
+
+The owner/context policy is selected on tune. Next gates: freeze it, evaluate
+once on the sealed reserve, then build and validate a separate full test
+submission if it improves the fallback. Test labels and Portal accuracy remain
+unknown.
