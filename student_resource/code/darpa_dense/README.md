@@ -245,3 +245,39 @@ sbatch cluster/train.sbatch
 The historical ID list contains only Source 1 identifiers from supplied training
 data; it makes the fresh split exclusions reproducible. Code is MIT licensed;
 the encoder base and derivative weights retain their Apache-2.0 provenance.
+
+## Reproduce the selected final output from the archive
+
+The submission ZIP places these Python files directly under
+`code/business_entity_resolution/src/`, the frozen encoder under `models/encoder/`,
+the pair/context models under `models/owner/`, and the historical exclusion IDs
+under `splits/`. Use Linux with a CUDA GPU and the pinned requirements. The
+challenge's original `dataset/` directory should sit next to `code/` at the
+extracted archive root. From `code/business_entity_resolution/`, run:
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python src/prepare.py --dataset ../../dataset --output work/data \
+  --previous-ids splits/previous_development_ids.txt
+.venv/bin/python src/encode.py --data work/data --model models/encoder \
+  --output work/test_vectors --glob 'test_s1_*.parquet' --batch-size 512
+.venv/bin/python src/retrieve_owners.py --data work/data \
+  --vectors work/test_vectors --model models/encoder \
+  --output work/test_retrieval --split test --batch-size 512 --k 10
+.venv/bin/python src/build_features.py --data work/data \
+  --retrieval work/test_retrieval --output work/test_features \
+  --split test --workers 6
+.venv/bin/python src/predict_frozen.py --data work/data \
+  --features work/test_features --retrieval work/test_retrieval \
+  --model models/owner --threshold 0.62 --split test \
+  --source1-tsv ../../dataset/test/test_source1.tsv --output work/reproduced_output
+```
+
+The final command writes both required TSVs and `run.json`. Retrieval preserves
+ten candidates per target, feature extraction scores all ten, and the candidate
+TSV reverses exactly those scored edges per Source 1 entity. These commands
+require space for complete test vectors, retrieval arrays, pair features, and
+TSVs; the provided `cluster/` scripts show the staged server execution used
+for this run. `run.json` records file and model hashes so a reproduction can be
+compared with the packaged output.
