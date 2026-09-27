@@ -14,9 +14,10 @@ business; a Source 1 business may receive multiple targets.
 On a fresh, name-group-disjoint 7,882-entity tuning cohort, this policy scores
 **0.982959 macro F₀.₅** versus **0.977520** for our earlier frozen CatBoost
 submission on the identical cohort. The threshold was selected on this tuning
-cohort, so this result is not an independent test or Portal score. The sealed
-reserve and test outcomes are reported separately in the final validation
-record; test labels are not available locally.
+cohort. The already frozen policy then scored **0.984081** on the separate
+7,909-entity sealed reserve, versus **0.980752** for our earlier CatBoost
+submission on the same reserve. These are local training-data holdouts, not
+Portal or test scores. Test labels are not available locally.
 
 ## 2. Data and Evaluation Design
 
@@ -90,6 +91,14 @@ frozen CatBoost baseline is **+0.005439** macro F₀.₅, with a 2,000-replicate
 name-group bootstrap interval of **[+0.003417, +0.007640]**. The tuning
 singleton accuracy is 0.977887. The frozen policy and model SHA-256 hashes
 are in `reports/frozen_policy.json`.
+
+After policy selection, the reserve was evaluated once without changing the
+model or threshold. It has 26,773 true-positive links, 194 false positives,
+and 732 missed links. The paired reserve improvement is **+0.003329** macro
+F₀.₅, with a 2,000-replicate name-group bootstrap interval of
+**[+0.001341, +0.005227]**. The reserve result is in
+`reports/reserve_paired_f05.json`. No reserve result was used to retune the
+decision threshold.
 
 ## 6. Reproduction and Submission Validation
 

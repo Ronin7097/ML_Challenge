@@ -3,8 +3,9 @@
 All numbers below are from supplied competition training data unless labelled
 otherwise. The new tune cohort has 7,882 Source 1 entities and excludes name
 groups used in the earlier DARPA development sample. Its 7,909-entity reserve
-cohort remains sealed. Local tune scores, the earlier audit, and Portal scores
-measure different populations.
+cohort was evaluated once after the owner/context policy was frozen. Local tune
+and reserve scores, the earlier audit, and Portal scores measure different
+populations.
 
 | Approach | Same-cohort result | Outcome |
 | --- | ---: | --- |
@@ -36,7 +37,11 @@ smoke completed there before all 6,110 India and 7,447 US routed tune groups
 were scored. The Qwen sweep reproduced the owner/context base score before
 applying overrides, so this regression is not a base-score mismatch.
 
-The owner/context policy is selected on tune. Next gates: freeze it, evaluate
-once on the sealed reserve, then build and validate a separate full test
-submission if it improves the fallback. Test labels and Portal accuracy remain
-unknown.
+The owner/context policy was selected on tune and frozen at threshold 0.62
+before one reserve evaluation. On 7,909 reserve entities it reached
+**0.9840808** macro F0.5 versus **0.9807521** for the frozen CatBoost baseline
+on those same entities, a paired gain of **+0.0033287**. The 2,000-replicate
+name-group interval is **[+0.0013414, +0.0052273]**. See
+`reports/reserve_paired_f05.json`. This independent improvement supports a
+separate full test submission; complete test inference and validation are the
+remaining gates. Test labels and Portal accuracy remain unknown.

@@ -121,8 +121,8 @@ completed there. Selective scoring then covered all 6,110 India and 7,447 US
 routed tune groups. The best tested Qwen override policy scored 0.9741626707
 macro F0.5, below both the owner/context model (0.9829591299) and the frozen
 baseline (0.9775204401). Its 525 false-positive links and 0.91646 singleton
-accuracy make it unsuitable for promotion. The owner/context policy is selected
-for a single sealed-reserve evaluation. See `reports/qwen06_paired_tune.json`.
+accuracy make it unsuitable for promotion. The owner/context policy was selected
+and then evaluated on reserve. See `reports/qwen06_paired_tune.json`.
 
 `fit_selector.py` adds the requested **SEL1** alternative: a second LightGBM
 learns from whole shortlisted owner groups after the pair model, chooses among
@@ -147,8 +147,13 @@ difference is +0.0054387; a 2,000-replicate name-group bootstrap interval is
 [+0.0034172, +0.0076403]. Country and name-frequency breakdowns are in
 `reports/full_owner_paired_tune.json`. The 0.62 decision threshold was selected
 on this tune cohort, so the resulting tune F0.5 is optimistic for generalization.
-The sealed reserve is unopened and the Portal score is unknown. SEL1 and Qwen
-were compared on the same tune set and did not improve this result.
+The selected policy was evaluated once on the sealed 7,909-entity reserve after
+freeze. It scored **0.9840807683** macro F0.5 against **0.9807520537** for
+the frozen CatBoost baseline on the same entities, with a paired name-group
+bootstrap interval for the gain of **[+0.0013414, +0.0052273]**. The threshold
+was not adjusted after reserve evaluation. This is not a Portal or test score;
+the Portal score for this challenger is unknown. SEL1 and Qwen were compared on
+tune and did not improve the selected policy.
 The independent frozen inference entry point, `predict_frozen.py`, reproduced
 all 7,882 tune matching rows exactly from the saved models and complete feature
 graph. Its candidate file contained 333,635 actual scored pairs and recovered
@@ -189,7 +194,8 @@ The pilot top-10 result did not clear the predeclared 99% processing gate, so th
 expensive control pipeline stopped before full-target inference. HN1 cleared
 the gate; its 1,024-target full-pool smoke passed finite-score, score-order,
 unique-owner, and owner-bound checks. Its complete train target retrieval also
-finished on the A6000 server. No reserve labels have been used.
+finished on the A6000 server. Reserve labels were opened only for the single
+post-freeze evaluation described above.
 
 The Qwen 0.6B adapter training smoke completed two optimizer steps on 16 supplied
 training pairs. It is only an execution check, not a fitted competition model.
