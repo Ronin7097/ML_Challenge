@@ -46,19 +46,22 @@ def main():
     p.add_argument("--baseline", type=Path)
     p.add_argument("--candidate", type=Path)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--role", choices=["tune", "reserve"], default="tune")
     a = p.parse_args()
     db = duckdb.connect(str(a.data/"records.duckdb"), read_only=True)
     rows = db.execute("""WITH frequencies AS (SELECT name_group,count(*) AS n FROM roles GROUP BY 1)
       SELECT r.entity_id,r.country,r.name_group,f.n,t.truth_ids FROM roles r
       JOIN frequencies f USING(name_group) JOIN truth t ON r.entity_id=t.s1_id
-      WHERE r.role='tune' ORDER BY r.entity_id""").fetchall()
+      WHERE r.role=? ORDER BY r.entity_id""", [a.role]).fetchall()
     ids = [r[0] for r in rows]
     wanted = set(ids)
     gold = {r[0]: set(r[4].split(',')) if r[4] else set() for r in rows}
     pred = read_predictions(a.prediction, wanted)
     score, links = entity_scores(gold, pred, ids)
     singleton = np.asarray([not gold[q] for q in ids])
-    report = {"evaluation": "fresh name-group tune; not Portal; reserve unopened", "entities": len(ids),
+    report = {"evaluation": ("fresh name-group tune; not Portal; reserve unopened" if a.role=="tune"
+                             else "single sealed name-group reserve evaluation; not Portal"),
+              "entities": len(ids),
               "macro_f05": float(score.mean()), "links": links,
               "singleton_entities": int(singleton.sum()),
               "singleton_accuracy": float(score[singleton].mean()) if singleton.any() else None}

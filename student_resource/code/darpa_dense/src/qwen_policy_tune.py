@@ -83,7 +83,8 @@ def main():
         routed[country]=(qtr,qow,qp,qmargin)
         identity[country]={'decision_sha256':sha(decisions),
                            'qwen_selection_sha256':sha(folder/'selection.parquet'),
-                           'qwen_groups':len(qtr)}
+                           'qwen_groups':len(qtr),
+                           'score_config':json.loads((folder/'config.json').read_text())}
     baseline_score,baseline_links=macro_f05(base,metadata)
     old=json.loads((a.owner_model/'complete.json').read_text())['best_tune']['macro_f05']
     if abs(baseline_score-old)>1e-10:
@@ -130,7 +131,8 @@ def main():
                 grouped.setdefault(ow,[]).append(target_ids[tr])
             for ow in np.flatnonzero(roles==ROLE['tune']):
                 f.write(ids[ow]+'\t'+','.join(sorted(grouped.get(int(ow),[])))+'\n')
-    atomic_json(a.output/'complete.json',{'best_tune':best,'base_tune_f05':baseline_score,
+    atomic_json(a.output/'complete.json',{'best_tune':best,'base_threshold':a.base_threshold,
+        'frozen':False,'base_tune_f05':baseline_score,
         'base_links':baseline_links,'sweep':sweep,'identities':identity,'reserve_opened':False,
         'warning':'Thresholds selected on tune; independent reserve evaluation still required'})
     print(json.dumps({'base':baseline_score,'best':best}),flush=True)

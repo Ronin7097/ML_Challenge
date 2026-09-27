@@ -7,6 +7,7 @@ from pathlib import Path
 
 import lightgbm as lgb
 import numpy as np
+import pyarrow as pa
 import pyarrow.parquet as pq
 
 from fit_owner import CONTEXT_NAMES, FEATURE_NAMES, WINNER_NAMES, incoming_context
@@ -20,10 +21,10 @@ def sha(path):
     return h.hexdigest()
 
 
-def score_country(source,target,folder,pair,contexts,k):
+def score_country(source,target,folder,pair,contexts,k,routing_output=None,country=None):
     ids=pq.read_table(source,columns=['entity_id'])['entity_id'].to_pylist()
     targets=pq.read_table(target,columns=['entity_id'])['entity_id'].to_pylist()
-    tr_chunks=[];ow_chunks=[];x_chunks=[]
+    tr_chunks=[];ow_chunks=[];x_chunks=[];pair_chunks=[];margin_chunks=[]
     for path in sorted(folder.glob('features-*.parquet')):
         table=pq.read_table(path)
         tr=table['target_row'].to_numpy();ow=table['owner_row'].to_numpy()
@@ -41,6 +42,8 @@ def score_country(source,target,folder,pair,contexts,k):
                                (p>=.5).sum(axis=1),(p>=.1).sum(axis=1)])
         tr_chunks.append(tr[selected]);ow_chunks.append(ow[selected])
         x_chunks.append(np.column_stack([raw[selected],extra]).astype(np.float32))
+        if routing_output is not None:
+            pair_chunks.append(first);margin_chunks.append(first-second)
     tr,ow,x=map(np.concatenate,(tr_chunks,ow_chunks,x_chunks))
     if x.shape[1]!=len(WINNER_NAMES) or len(np.unique(tr))!=len(tr):
         raise ValueError('Winner feature schema or target uniqueness failed')
@@ -50,6 +53,15 @@ def score_country(source,target,folder,pair,contexts,k):
     prob=np.mean([m.predict(x,num_threads=6) for m in contexts],axis=0)
     if not np.isfinite(prob).all():
         raise FloatingPointError('Nonfinite context probability')
+    if routing_output is not None:
+        routing_output.mkdir(parents=True,exist_ok=True)
+        winners=routing_output/f'all_winners_{country}.parquet'
+        decisions=routing_output/f'decisions_{country}.parquet'
+        pq.write_table(pa.table({'target_row':tr,'owner_row':ow,
+            'pair_probability':np.concatenate(pair_chunks),
+            'pair_margin':np.concatenate(margin_chunks)}),winners,compression='zstd')
+        pq.write_table(pa.table({'target_row':tr,'owner_row':ow,
+            'context_probability':prob}),decisions,compression='zstd')
     return ids,targets,tr,ow,prob
 
 
@@ -87,6 +99,8 @@ def main():
     p.add_argument('--split',choices=['test','train'],default='test')
     p.add_argument('--role',default='',help='For sealed train evaluation, e.g. reserve')
     p.add_argument('--threshold',type=float,required=True)
+    p.add_argument('--routing-output',type=Path,
+                   help='Also export exact frozen winner groups and decisions for selective reranking')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     if (a.output/'run.json').exists():
         raise ValueError('Output run already recorded; use a new output directory')
@@ -121,7 +135,8 @@ def main():
         if a.split=='train' and a.role not in feature_config['roles']:
             raise ValueError('Requested holdout role is absent from feature graph')
         k=feature_config['retrieval']['k']
-        ids,targets,tr,ow,prob=score_country(source,target,folder,pair,contexts,k)
+        ids,targets,tr,ow,prob=score_country(source,target,folder,pair,contexts,k,
+                                            a.routing_output,country)
         if a.split=='train':
             roles=np.asarray(pq.read_table(source,columns=['role'])['role'].to_pylist())
             wanted=roles==a.role
@@ -171,6 +186,9 @@ def main():
                          **{path.name:sha(path) for path in sorted(a.model.glob('context_*.txt'))}},
         'matching_sha256':sha(a.output/'matching_results.tsv'),
         'candidate_sha256':sha(a.output/'candidate_pairs.tsv'),
+        'reranker_routing_sha256':({country:{name:sha(a.routing_output/f'{name}_{country}.parquet')
+            for name in ('all_winners','decisions')} for country in counts}
+            if a.routing_output else None),
         'reserve_labels_read':False})
 
 

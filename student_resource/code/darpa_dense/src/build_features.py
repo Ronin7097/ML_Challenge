@@ -34,12 +34,20 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--split", choices=["train", "test"], default="train")
     p.add_argument("--roles", nargs="+", default=["pair", "context", "tune"])
+    p.add_argument("--frozen-policy", type=Path,
+                   help="Required to open reserve features after the decision policy is frozen")
     p.add_argument("--workers", type=int, default=6)
     p.add_argument("--chunk-size", type=int, default=65536)
     p.add_argument("--max-chunks", type=int, default=0, help="Incomplete smoke run")
     a = p.parse_args()
     if "reserve" in a.roles:
-        raise ValueError("Reserve feature export requires a separately frozen evaluation workflow")
+        if a.split != "train" or a.frozen_policy is None:
+            raise ValueError("Reserve feature export requires a frozen train policy manifest")
+        policy = json.loads(a.frozen_policy.read_text())
+        if not policy.get("frozen") or not policy.get("selected_on_tune") or policy.get("reserve_opened"):
+            raise ValueError("Policy was not frozen before reserve feature export")
+    elif a.frozen_policy is not None:
+        raise ValueError("Frozen policy manifest is only for reserve evaluation")
     a.output.mkdir(parents=True, exist_ok=True)
     code_hash = hashlib.sha256(Path(__file__).with_name("pair_features.py").read_bytes()).hexdigest()
     for source in sorted(a.data.glob(f"{a.split}_s1_*.parquet")):
@@ -55,7 +63,8 @@ def main():
         dest = a.output/f"{a.split}_{country}"
         dest.mkdir(exist_ok=True)
         signature = {"retrieval": sig, "feature_code_sha256": code_hash, "columns": FEATURE_NAMES,
-                     "roles": a.roles if a.split == "train" else ["all"], "chunk_size": a.chunk_size}
+                     "roles": a.roles if a.split == "train" else ["all"], "chunk_size": a.chunk_size,
+                     "frozen_policy_sha256": sha(a.frozen_policy) if a.frozen_policy else None}
         config = dest/"config.json"
         if config.exists() and json.loads(config.read_text()) != signature:
             raise ValueError("Feature output directory belongs to another configuration")
