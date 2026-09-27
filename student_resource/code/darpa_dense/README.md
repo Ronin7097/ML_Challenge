@@ -149,6 +149,12 @@ all 7,882 tune matching rows exactly from the saved models and complete feature
 graph. Its candidate file contained 333,635 actual scored pairs and recovered
 27,135 of 27,261 true links; the streaming evaluator reproduced the same
 0.9829591299071904 macro F0.5. See `reports/predict_frozen_parity.json`.
+The optional reranker-routing export was also checked against the original
+fit-stage winner graph: target and owner rows match exactly across 1,957,017
+groups, pair probabilities differ only by float32 rounding (at most 5e-8), and
+context probabilities for the 258,104 fitted/evaluated winner rows agree within
+1e-12. Its matching and candidate TSVs are byte-identical to the first frozen
+inference run.
 
 The pilot's same-population positive-link retrieval recall is **0.9895455 at
 k=10**, **0.9921500 at k=20**, and **0.9934338 at k=32**; top-1 is 0.9682330.

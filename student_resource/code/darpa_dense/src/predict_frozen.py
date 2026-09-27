@@ -58,8 +58,9 @@ def score_country(source,target,folder,pair,contexts,k,routing_output=None,count
         winners=routing_output/f'all_winners_{country}.parquet'
         decisions=routing_output/f'decisions_{country}.parquet'
         pq.write_table(pa.table({'target_row':tr,'owner_row':ow,
-            'pair_probability':np.concatenate(pair_chunks),
-            'pair_margin':np.concatenate(margin_chunks)}),winners,compression='zstd')
+            'pair_probability':np.concatenate(pair_chunks).astype(np.float32),
+            'pair_margin':np.concatenate(margin_chunks).astype(np.float32)}),winners,
+            compression='zstd')
         pq.write_table(pa.table({'target_row':tr,'owner_row':ow,
             'context_probability':prob}),decisions,compression='zstd')
     return ids,targets,tr,ow,prob
