@@ -281,3 +281,11 @@ require space for complete test vectors, retrieval arrays, pair features, and
 TSVs; the provided `cluster/` scripts show the staged server execution used
 for this run. `run.json` records file and model hashes so a reproduction can be
 compared with the packaged output.
+
+The completed full-test run contains 1,732,544 Source 1 rows, 6,008,048
+predicted links, and 99,695,890 scored candidate pairs for 9,969,589 targets.
+The local files are `student_resource/output_dense_final/matching_results.tsv`
+and `student_resource/output_dense_final/candidate_pairs.tsv`; the submission
+archive is `student_resource/darpa_dense_final/DARPA_submission.zip`.
+Withheld test labels are unavailable, so these counts and validation results
+are not a test F0.5 score.

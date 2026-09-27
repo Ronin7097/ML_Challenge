@@ -110,7 +110,11 @@ pair and five context LightGBM models, pinned dependencies, and source code.
 The Granite base and derivative weights use Apache-2.0; our code uses MIT.
 The selected model is well below the 8-billion-parameter limit.
 
-The final archive validation record will identify the complete Source 1 row
-count, predicted links, actual candidate pairs, streaming TSV checks, official
-matching-ID existence check, and SHA-256 identities. None of these formatting
-checks estimates withheld test F₀.₅.
+The frozen full-test run covered **1,732,544 Source 1 entities** and
+**9,969,589 targets** across France, India, and the US. It produced
+**6,008,048 predicted links** and **99,695,890 actual scored candidate pairs**,
+ten per target. The output manifest records SHA-256 identities for both TSVs.
+The streaming validator passed on all matching and candidate rows, and the
+official validator passed with matching-ID existence checked against the full
+test target set. The separate validation report records both results. These checks establish submission
+integrity, not withheld test F₀.₅.

@@ -1,0 +1,23 @@
+{
+  "team": "DARPA",
+  "status": "VALIDATED_LOCAL_SUBMISSION",
+  "test_f05": "unavailable; withheld labels",
+  "selected_policy": "frozen_dense_owner_context_threshold_0.62",
+  "tune_macro_f05": 0.9829591299071904,
+  "independent_reserve_macro_f05": 0.9840807683423238,
+  "same_reserve_catboost_macro_f05": 0.9807520536866292,
+  "source1_rows": 1732544,
+  "target_rows": 9969589,
+  "predicted_links": 6008048,
+  "scored_candidate_pairs": 99695890,
+  "matching_sha256": "ad82bef87af2d434cf472514d51a929569fb0629c14c6c2e1fae55a6b26d7390",
+  "candidate_sha256": "8514f331f27485275f6f294d815d005bb063519383b8255c4c35988f02cbba34",
+  "streaming_validation": "PASS",
+  "official_matching_id_validation": "PASS",
+  "archive_sha256": "96324ad921d481e738c3384262243414845f637a05115faa4ac68dd9b7cfc2f1",
+  "archive_entries": 81,
+  "archive_crc": "PASS",
+  "archive_identities": "PASS",
+  "original_baseline_archive_sha256": "c4b9889638ae4eac23f79200efefd68a0ab286169fc182f23c707c3982923570",
+  "portal_upload": "deferred by user"
+}

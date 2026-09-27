@@ -11,6 +11,8 @@ student_resource/code/business_entity_resolution/resolver_boost
 student_resource/code/business_entity_resolution/resolver_advanced
 student_resource/output_advanced/
 student_resource/.output_advanced-*/
+student_resource/output_dense_final/
+student_resource/darpa_dense_final/
 __pycache__/
 catboost_info/
 .darpa_remote.json
